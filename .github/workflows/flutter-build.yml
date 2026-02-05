@@ -94,6 +94,10 @@ jobs:
 
       - name: Auto Inject Server Config
         run: |
+          pwd
+
+          ls
+          
           cd libs/hbb_common/src
           
           sed -i 's/"rs-ny.rustdesk.com"/"rustdesk.itstomorin.cn"/g' config.rs
