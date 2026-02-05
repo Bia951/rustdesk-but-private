@@ -80,16 +80,6 @@ jobs:
             }
           # - { target: aarch64-pc-windows-msvc, os: windows-2022, arch: aarch64 }
     steps:
-      - name: Auto Inject Server Config
-        run: |
-          cd libs/hbb_common/src
-          
-          sed -i 's/"rs-ny.rustdesk.com"/"rustdesk.itstomorin.cn"/g' config.rs
-        
-          sed -i 's/RS_PUB_KEY: \&str = ""/RS_PUB_KEY: \&str = "hrPrVtYmAHGReIR552swYsGny0kreUNfppUfHb9M4m8="/g' config.rs
-
-          echo "Config updated:"
-      
       - name: Export GitHub Actions cache environment variables
         uses: actions/github-script@v6
         with:
@@ -101,6 +91,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Auto Inject Server Config
+        run: |
+          cd libs/hbb_common/src
+          
+          sed -i 's/"rs-ny.rustdesk.com"/"rustdesk.itstomorin.cn"/g' config.rs
+        
+          sed -i 's/RS_PUB_KEY: \&str = ""/RS_PUB_KEY: \&str = "hrPrVtYmAHGReIR552swYsGny0kreUNfppUfHb9M4m8="/g' config.rs
+
+          echo "Config updated:"    
 
       - name: Restore bridge files
         uses: actions/download-artifact@master
