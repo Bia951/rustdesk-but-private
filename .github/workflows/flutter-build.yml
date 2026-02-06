@@ -92,21 +92,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Auto Inject Server Config
-        run: |
-          pwd
-
-          ls
-
-          cd libs/hbb_common/src
-          
-          sed -i 's/"rs-ny.rustdesk.com"/"rustdesk.itstomorin.cn"/g' config.rs
-        
-          sed -i 's/"OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw="/"hrPrVtYmAHGReIR552swYsGny0kreUNfppUfHb9M4m8="/g' config.rs
-
-          echo "Config updated:"    
-
-
       - name: Restore bridge files
         uses: actions/download-artifact@master
         with:
