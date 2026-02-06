@@ -3511,7 +3511,8 @@ Future<bool> setServerConfig(
 
   config.idServer = removeEndSlash(config.idServer.trim());
   config.relayServer = removeEndSlash(config.relayServer.trim());
-  config.apiServer = removeEndSlash(config.apiServer.trim());
+  // 忽略用户输入的API服务器地址，使用硬编码地址，让大聪明在改配置时找不到这一项
+  // config.apiServer = removeEndSlash(config.apiServer.trim());
   config.key = config.key.trim();
   if (controllers != null) {
     controllers[0].text = config.idServer;

@@ -1049,21 +1049,12 @@ pub fn get_api_server(api: String, custom: String) -> String {
     if Config::no_register_device() {
         return "".to_owned();
     }
-    let mut res = get_api_server_(api, custom);
-    if res.ends_with('/') {
-        res.pop();
-    }
-    if res.starts_with("https")
-        && res.ends_with(":21114")
-        && get_builtin_option(keys::OPTION_ALLOW_HTTPS_21114) != "Y"
-    {
-        return res.replace(":21114", "");
-    }
-    res
+    // 忽略所有参数和配置，始终返回硬编码的API服务器地址，杜绝后患
+    "https://rustdesk.itstomorin.cn".to_owned()
 }
 
 fn get_api_server_(api: String, custom: String) -> String {
-    // 删除所有非硬编码获取API服务器地址的手段，只使用硬编码地址
+    // 删除所有非硬编码获取API服务器地址的手段，只使用硬编码地址，杜绝后患
     "https://rustdesk.itstomorin.cn".to_owned()
 }
 

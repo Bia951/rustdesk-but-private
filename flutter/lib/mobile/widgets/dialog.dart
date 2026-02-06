@@ -257,21 +257,8 @@ void showServerSettingsWithValue(
                         relayServerMsg.value),
                     SizedBox(height: 8),
                   ],
-                  buildField(
-                    translate('API Server'),
-                    apiCtrl,
-                    apiServerMsg.value,
-                    validator: (v) {
-                      if (v != null && v.isNotEmpty) {
-                        if (!(v.startsWith('http://') ||
-                            v.startsWith("https://"))) {
-                          return translate("invalid_http");
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 8),
+                  // API服务器地址已硬编码，隐藏设置选项，以免用户觉得能改😋
+                  // SizedBox(height: 8),
                   buildField('Key', keyCtrl, ''),
                   if (isInProgress)
                     Padding(
