@@ -1648,13 +1648,7 @@ class _NetworkState extends State<_Network> with AutomaticKeepAliveClientMixin {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (!hideServer)
-                listTile(
-                  icon: Icons.dns_outlined,
-                  title: 'ID/Relay Server',
-                  onTap: () => showServerSettings(gFFI.dialogManager, setState),
-                ),
-              if (!hideProxy && !hideServer) divider,
+              // 移除ID/Relay Server设置选项，服务器地址已硬编码，多余代码依旧干掉
               if (!hideProxy)
                 listTile(
                   icon: Icons.network_ping_outlined,

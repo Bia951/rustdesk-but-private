@@ -701,16 +701,7 @@ class _SettingsState extends State<SettingsPage> with WidgetsBindingObserver {
             ],
           ),
         SettingsSection(title: Text(translate("Settings")), tiles: [
-          if (!disabledSettings && !_hideNetwork && !_hideServer)
-            SettingsTile(
-                title: Text(translate('ID/Relay Server')),
-                leading: Icon(Icons.cloud),
-                onPressed: (context) {
-                  showServerSettings(gFFI.dialogManager, (callback) async {
-                    _isUsingPublicServer = await bind.mainIsUsingPublicServer();
-                    setState(callback);
-                  });
-                }),
+          // 移除ID/Relay Server设置选项，服务器地址已硬编码，多余代码直接干掉
           if (!_hideNetwork && !_hideProxy)
             SettingsTile(
                 title: Text(translate('Socks5/Http(s) Proxy')),

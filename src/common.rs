@@ -1029,19 +1029,8 @@ pub fn is_setup(name: &str) -> bool {
 }
 
 pub fn get_custom_rendezvous_server(custom: String) -> String {
-    #[cfg(windows)]
-    if let Ok(lic) = crate::platform::windows::get_license_from_exe_name() {
-        if !lic.host.is_empty() {
-            return lic.host.clone();
-        }
-    }
-    if !custom.is_empty() {
-        return custom;
-    }
-    if !config::PROD_RENDEZVOUS_SERVER.read().unwrap().is_empty() {
-        return config::PROD_RENDEZVOUS_SERVER.read().unwrap().clone();
-    }
-    "".to_owned()
+    // 忽略所有配置，始终返回硬编码的打洞/中转服务器地址
+    "rustdesk.itstomorin.cn".to_owned()
 }
 
 #[inline]
@@ -1707,8 +1696,8 @@ pub fn create_symmetric_key_msg(their_pk_b: [u8; 32]) -> (Bytes, Bytes, secretbo
 
 #[inline]
 pub fn using_public_server() -> bool {
-    option_env!("RENDEZVOUS_SERVER").unwrap_or("").is_empty()
-        && crate::get_custom_rendezvous_server(get_option("custom-rendezvous-server")).is_empty()
+    // 始终返回false，这样在使用硬编码默认服务器时也能显示额外的选项，但正常人也不会去打开这些选项就是了
+    false
 }
 
 pub struct ThrottledInterval {
