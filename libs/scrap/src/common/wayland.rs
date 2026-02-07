@@ -71,8 +71,90 @@ impl Display {
         Ok(all.remove(0))
     }
 
+    /// Check if the system is in lock screen or pre-login state
+    fn is_lock_screen_or_pre_login() -> bool {
+        // Check for common lock screen processes
+        let lock_screen_processes = [
+            "gdm-password",    // GNOME lock screen
+            "sddm-greeter",   // KDE lock screen
+            "lightdm-greeter", // LightDM greeter
+            "plymouth",       // Boot splash screen
+            "gdm-wayland-session", // GNOME Wayland session (lock screen)
+        ];
+        
+        // Check if any lock screen process is running
+        if let Ok(output) = std::process::Command::new("ps")
+            .arg("aux")
+            .output()
+        {
+            let output_str = String::from_utf8_lossy(&output.stdout);
+            for process in lock_screen_processes {
+                if output_str.contains(process) {
+                    eprintln!("Detected lock screen process: {}", process);
+                    return true;
+                }
+            }
+        }
+        
+        // Check for special login-related environment variables
+        if std::env::var("XDG_SESSION_TYPE").unwrap_or_default() == "wayland" {
+            // In some cases, pre-login environment might not have user-specific variables
+            if std::env::var("USER").unwrap_or_default() == "root" {
+                eprintln!("Detected root user in Wayland session (likely pre-login)");
+                return true;
+            }
+            
+            // Check if we're in a login manager context
+            if let Ok(display) = std::env::var("DISPLAY") {
+                if display.contains(":0") && std::env::var("HOME").unwrap_or_default() == "/root" {
+                    eprintln!("Detected root user with display :0 (likely login screen)");
+                    return true;
+                }
+            }
+        }
+        
+        false
+    }
+    
     pub fn all() -> io::Result<Vec<Display>> {
-        // Try PipeWire first
+        // If we're in lock screen or pre-login state, use DRM directly
+        if Self::is_lock_screen_or_pre_login() {
+            eprintln!("Detected lock screen or pre-login state, using DRM directly");
+            
+            // First try all available DRM cards
+            for i in 0..8 { // Try up to 8 DRM cards
+                let drm_path = format!("/dev/dri/card{}", i);
+                match crate::wayland::drm::DrmCapturable::new(&drm_path) {
+                    Ok(drm_capturable) => {
+                        eprintln!("Using DRM device for lock screen: {}", drm_path);
+                        return Ok(vec![Display(Box::new(drm_capturable))]);
+                    }
+                    Err(e) => {
+                        eprintln!("DRM device {} failed: {}", drm_path, e);
+                        // Continue to next device
+                    }
+                }
+            }
+            
+            // Try framebuffer devices as last resort
+            for i in 0..4 { // Try up to 4 framebuffer devices
+                let fb_path = format!("/dev/fb{}", i);
+                match crate::wayland::drm::DrmCapturable::new(&fb_path) {
+                    Ok(fb_capturable) => {
+                        eprintln!("Using framebuffer device for lock screen: {}", fb_path);
+                        return Ok(vec![Display(Box::new(fb_capturable))]);
+                    }
+                    Err(e) => {
+                        eprintln!("Framebuffer device {} failed: {}", fb_path, e);
+                        // Continue to next device
+                    }
+                }
+            }
+            
+            return Err(map_err("All DRM and framebuffer devices failed in lock screen state".to_string()));
+        }
+        
+        // Normal case: Try PipeWire first
         match pipewire::get_capturables() {
             Ok(capturables) => {
                 if !capturables.is_empty() {
@@ -89,23 +171,38 @@ impl Display {
         }
         
         // Try DRM as fallback
-        match drm::DrmCapturable::new("/dev/dri/card0") {
-            Ok(drm_capturable) => {
-                Ok(vec![Display(Box::new(drm_capturable))])
-            }
-            Err(e) => {
-                // Try framebuffer as last resort
-                eprintln!("DRM failed, trying framebuffer: {}", e);
-                match drm::DrmCapturable::new("/dev/fb0") {
-                    Ok(fb_capturable) => {
-                        Ok(vec![Display(Box::new(fb_capturable))])
-                    }
-                    Err(e) => {
-                        Err(map_err(format!("All capture methods failed: {}", e)))
-                    }
+        // First try all available DRM cards
+        for i in 0..8 { // Try up to 8 DRM cards
+            let drm_path = format!("/dev/dri/card{}", i);
+            match crate::wayland::drm::DrmCapturable::new(&drm_path) {
+                Ok(drm_capturable) => {
+                    eprintln!("Using DRM device: {}", drm_path);
+                    return Ok(vec![Display(Box::new(drm_capturable))]);
+                }
+                Err(e) => {
+                    eprintln!("DRM device {} failed: {}", drm_path, e);
+                    // Continue to next device
                 }
             }
         }
+        
+        // Try framebuffer devices as last resort
+        for i in 0..4 { // Try up to 4 framebuffer devices
+            let fb_path = format!("/dev/fb{}", i);
+            match crate::wayland::drm::DrmCapturable::new(&fb_path) {
+                Ok(fb_capturable) => {
+                    eprintln!("Using framebuffer device: {}", fb_path);
+                    return Ok(vec![Display(Box::new(fb_capturable))]);
+                }
+                Err(e) => {
+                    eprintln!("Framebuffer device {} failed: {}", fb_path, e);
+                    // Continue to next device
+                }
+            }
+        }
+        
+        // All capture methods failed
+        Err(map_err("All capture methods failed: No working DRM or framebuffer device found".to_string()))
     }
 
     pub fn width(&self) -> usize {

@@ -23,7 +23,7 @@ use gstreamer_app::AppSink;
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 
-use hbb_common::{bail, config, platform::linux::CMD_SH, serde_json, tokio, ResultType};
+use hbb_common::{bail, config, platform::linux::CMD_SH, serde_json, ResultType};
 
 use super::capturable::PixelProvider;
 use super::capturable::{Capturable, Recorder};
@@ -225,6 +225,10 @@ impl Capturable for PipeWireCapturable {
 
     fn recorder(&self, _capture_cursor: bool) -> Result<Box<dyn Recorder>, Box<dyn Error>> {
         Ok(Box::new(PipeWireRecorder::new(self.clone())?))
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
     }
 }
 
@@ -1017,9 +1021,10 @@ pub fn try_fix_logical_size(shared_displays: &mut Vec<crate::Display>) {
 
     for sd in shared_displays.iter_mut() {
         if let crate::Display::WAYLAND(d) = sd {
-            let capturable = &mut d.0;
-            for wd in wayland_displays.displays.iter() {
-                if capturable.position.0 == wd.x && capturable.position.1 == wd.y {
+            // Downcast from Box<dyn Capturable> to PipeWireCapturable
+            if let Some(capturable) = d.0.as_any_mut().downcast_mut::<PipeWireCapturable>() {
+                for wd in wayland_displays.displays.iter() {
+                    if capturable.position.0 == wd.x && capturable.position.1 == wd.y {
                     if let Some(logical_size) = wd.logical_size {
                         if capturable.physical_size.0 != wd.width as usize
                             || capturable.physical_size.1 != wd.height as usize
@@ -1094,7 +1099,10 @@ pub fn fill_displays(
 
     shared_displays.iter_mut().next().map(|d| {
         if let crate::Display::WAYLAND(d) = d {
-            d.0.primary = true;
+            // Downcast from Box<dyn Capturable> to PipeWireCapturable
+            if let Some(capturable) = d.0.as_any_mut().downcast_mut::<PipeWireCapturable>() {
+                capturable.primary = true;
+            }
         }
     });
 
@@ -1124,24 +1132,25 @@ fn try_fill_positions(
     let mut multi_matched_indices = Vec::new();
     for (i, sd) in shared_displays.iter_mut().enumerate() {
         if let crate::Display::WAYLAND(d) = sd {
-            let capturable = &mut d.0;
-            let mut match_count = 0;
-            for wd in displays.displays.iter() {
-                if capturable.physical_size.0 == wd.width as usize
-                    && capturable.physical_size.1 == wd.height as usize
-                {
-                    capturable.position = (wd.x, wd.y);
-                    if let Some(pw_stream) = streams.get_mut(i) {
-                        pw_stream.position = (wd.x, wd.y);
+            // Downcast from Box<dyn Capturable> to PipeWireCapturable
+            if let Some(capturable) = d.0.as_any_mut().downcast_mut::<PipeWireCapturable>() {
+                let mut match_count = 0;
+                for wd in displays.displays.iter() {
+                    if capturable.physical_size.0 == wd.width as usize
+                        && capturable.physical_size.1 == wd.height as usize
+                    {
+                        capturable.position = (wd.x, wd.y);
+                        if let Some(pw_stream) = streams.get_mut(i) {
+                            pw_stream.position = (wd.x, wd.y);
+                        }
+                        match_count += 1;
                     }
-                    match_count += 1;
                 }
-            }
-            if match_count == 0 {
-                warn!(
-                    "No matching display found for capturable with size {:?}.",
-                    capturable.physical_size
-                );
+                if match_count == 0 {
+                    warn!(
+                        "No matching display found for capturable with size {:?}.",
+                        capturable.physical_size
+                    );
             } else if match_count > 1 {
                 multi_matched_indices.push(i);
             }
@@ -1189,9 +1198,10 @@ fn try_fill_positions_from_cache(
 
     for (i, sd) in shared_displays.iter_mut().enumerate() {
         if let crate::Display::WAYLAND(d) = sd {
-            let capturable = &mut d.0;
-            if let Some((x_off, y_off)) = cache.offsets.get(i) {
-                capturable.position = (*x_off, *y_off);
+            // Downcast from Box<dyn Capturable> to PipeWireCapturable
+            if let Some(capturable) = d.0.as_any_mut().downcast_mut::<PipeWireCapturable>() {
+                if let Some((x_off, y_off)) = cache.offsets.get(i) {
+                    capturable.position = (*x_off, *y_off);
                 if let Some(pw_stream) = streams.get_mut(i) {
                     pw_stream.position = (*x_off, *y_off);
                 }

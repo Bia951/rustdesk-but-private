@@ -40,7 +40,9 @@ where
     }
 }
 
-pub trait Capturable: Send + BoxCloneCapturable {
+use std::any::Any;
+
+pub trait Capturable: Send + BoxCloneCapturable + Any {
     /// Name of the Capturable, for example the window title, if it is a window.
     fn name(&self) -> String;
     /// Return x, y, width, height of the Capturable as floats relative to the absolute size of the
@@ -51,6 +53,8 @@ pub trait Capturable: Send + BoxCloneCapturable {
     fn before_input(&mut self) -> Result<(), Box<dyn Error>>;
     /// Return a Recorder that can record the current capturable.
     fn recorder(&self, capture_cursor: bool) -> Result<Box<dyn Recorder>, Box<dyn Error>>;
+    /// Downcast to Any for type checking and downcasting
+    fn as_any_mut(&mut self) -> &mut dyn Any;
 }
 
 impl Clone for Box<dyn Capturable> {
