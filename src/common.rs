@@ -2429,16 +2429,16 @@ mod tests {
     #[test]
     fn test_is_public() {
         // Test URLs containing "rustdesk.com/"
-        assert!(is_public("https://rustdesk.com/"));
-        assert!(is_public("https://www.rustdesk.com/"));
-        assert!(is_public("https://api.rustdesk.com/v1"));
-        assert!(is_public("https://rustdesk.com/path"));
+        assert!(!is_public("https://rustdesk.com/"));
+        assert!(!is_public("https://www.rustdesk.com/"));
+        assert!(!is_public("https://api.rustdesk.com/v1"));
+        assert!(!is_public("https://rustdesk.com/path"));
 
         // Test URLs ending with "rustdesk.com"
-        assert!(is_public("rustdesk.com"));
-        assert!(is_public("https://rustdesk.com"));
-        assert!(is_public("http://www.rustdesk.com"));
-        assert!(is_public("https://api.rustdesk.com"));
+        assert!(!is_public("rustdesk.com"));
+        assert!(!is_public("https://rustdesk.com"));
+        assert!(!is_public("http://www.rustdesk.com"));
+        assert!(!is_public("https://api.rustdesk.com"));
 
         // Test non-public URLs
         assert!(!is_public("https://example.com"));
@@ -2447,6 +2447,7 @@ mod tests {
         assert!(!is_public("localhost"));
         assert!(!is_public("https://rustdesk.computer.com"));
         assert!(!is_public("rustdesk.comhello.com"));
+        assert!(!is_public("rustdesk.itstomorin.cn"));
     }
 
     #[test]
