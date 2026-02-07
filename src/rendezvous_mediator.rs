@@ -738,14 +738,8 @@ impl RendezvousMediator {
     }
 
     fn get_relay_server(&self, provided_by_rendezvous_server: String) -> String {
-        let mut relay_server = Config::get_option("relay-server");
-        if relay_server.is_empty() {
-            relay_server = provided_by_rendezvous_server;
-        }
-        if relay_server.is_empty() {
-            relay_server = crate::increase_port(&self.host, 1);
-        }
-        relay_server
+        // 忽略所有配置和参数，始终返回硬编码的中继服务器地址
+        "rustdesk.itstomorin.cn:21117".to_owned()
     }
 }
 

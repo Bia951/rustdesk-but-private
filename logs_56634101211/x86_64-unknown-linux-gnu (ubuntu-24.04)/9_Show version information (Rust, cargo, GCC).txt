@@ -1,0 +1,32 @@
+﻿2026-02-07T00:28:35.9886622Z ##[group]Run gcc --version || true
+2026-02-07T00:28:35.9886921Z [36;1mgcc --version || true[0m
+2026-02-07T00:28:35.9887139Z [36;1mrustup -V[0m
+2026-02-07T00:28:35.9887336Z [36;1mrustup toolchain list[0m
+2026-02-07T00:28:35.9887545Z [36;1mrustup default[0m
+2026-02-07T00:28:35.9887738Z [36;1mcargo -V[0m
+2026-02-07T00:28:35.9887901Z [36;1mrustc -V[0m
+2026-02-07T00:28:35.9916793Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.9917104Z env:
+2026-02-07T00:28:35.9917301Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.9917629Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.9918258Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.9960285Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.9960854Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.9961479Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.9961742Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.9961973Z   CARGO_HOME: /home/runner/.cargo
+2026-02-07T00:28:35.9962193Z   CARGO_INCREMENTAL: 0
+2026-02-07T00:28:35.9962386Z   CARGO_TERM_COLOR: always
+2026-02-07T00:28:35.9962579Z ##[endgroup]
+2026-02-07T00:28:36.0024696Z gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
+2026-02-07T00:28:36.0025392Z Copyright (C) 2023 Free Software Foundation, Inc.
+2026-02-07T00:28:36.0025978Z This is free software; see the source for copying conditions.  There is NO
+2026-02-07T00:28:36.0026597Z warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+2026-02-07T00:28:36.0026888Z 
+2026-02-07T00:28:36.0071066Z info: This is the version for the rustup toolchain manager, not the rustc compiler.
+2026-02-07T00:28:36.0071552Z rustup 1.28.2 (e4f3ad6f8 2025-04-28)
+2026-02-07T00:28:36.0474511Z info: The currently active `rustc` version is `rustc 1.93.0 (254b59607 2026-01-19)`
+2026-02-07T00:28:36.0832302Z stable-x86_64-unknown-linux-gnu (active, default)
+2026-02-07T00:28:36.0909772Z stable-x86_64-unknown-linux-gnu (default)
+2026-02-07T00:28:36.6559101Z cargo 1.93.0 (083ac5135 2025-12-15)
+2026-02-07T00:28:36.7004339Z rustc 1.93.0 (254b59607 2026-01-19)

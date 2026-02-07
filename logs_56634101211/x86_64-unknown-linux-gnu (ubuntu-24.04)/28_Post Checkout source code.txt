@@ -1,0 +1,20 @@
+﻿2026-02-07T00:43:58.5005589Z Post job cleanup.
+2026-02-07T00:43:58.6046912Z [command]/usr/bin/git version
+2026-02-07T00:43:58.6082554Z git version 2.52.0
+2026-02-07T00:43:58.6124253Z Temporarily overriding HOME='/home/runner/work/_temp/c03e9e97-ca39-4720-842c-1061ed5d0fca' before making global git config changes
+2026-02-07T00:43:58.6125738Z Adding repository directory to the temporary git global config as a safe directory
+2026-02-07T00:43:58.6137277Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rustdesk-but-private/rustdesk-but-private
+2026-02-07T00:43:58.6170798Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-02-07T00:43:58.6202854Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-02-07T00:43:58.6411442Z Entering 'libs/hbb_common'
+2026-02-07T00:43:58.6470822Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-02-07T00:43:58.6491109Z http.https://github.com/.extraheader
+2026-02-07T00:43:58.6504379Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-02-07T00:43:58.6535263Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-02-07T00:43:58.6749033Z Entering 'libs/hbb_common'
+2026-02-07T00:43:58.6774239Z http.https://github.com/.extraheader
+2026-02-07T00:43:58.6822409Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-02-07T00:43:58.6852720Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-02-07T00:43:58.7058839Z Entering 'libs/hbb_common'
+2026-02-07T00:43:58.7077545Z file:/home/runner/work/rustdesk-but-private/rustdesk-but-private/.git/modules/libs/hbb_common/config	remote.origin.url
+2026-02-07T00:43:58.7111735Z [command]/usr/bin/git config --file /home/runner/work/rustdesk-but-private/rustdesk-but-private/.git/modules/libs/hbb_common/config --name-only --get-regexp ^includeIf\.gitdir:

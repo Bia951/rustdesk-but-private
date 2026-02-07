@@ -1,0 +1,456 @@
+﻿2026-02-07T00:21:58.3920432Z ##[group]Run $VCPKG_ROOT/vcpkg install --x-install-root="$VCPKG_ROOT/installed"
+2026-02-07T00:21:58.3920988Z [36;1m$VCPKG_ROOT/vcpkg install --x-install-root="$VCPKG_ROOT/installed"[0m
+2026-02-07T00:21:58.3952845Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:21:58.3953168Z env:
+2026-02-07T00:21:58.3953371Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:21:58.3953691Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:21:58.3954303Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:21:58.3996140Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:21:58.3996717Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:21:58.3997330Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:21:58.3997608Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:21:58.3997826Z ##[endgroup]
+2026-02-07T00:21:58.4065493Z warning: Embedding `vcpkg-configuration` in a manifest file is an EXPERIMENTAL feature.
+2026-02-07T00:21:58.8811970Z Detecting compiler hash for triplet x64-linux...
+2026-02-07T00:22:00.5514204Z Compiler found: /usr/bin/c++
+2026-02-07T00:22:00.5673426Z The following packages will be built and installed:
+2026-02-07T00:22:00.5673898Z   * amd-amf:x64-linux@1.4.35
+2026-02-07T00:22:00.5674994Z     aom:x64-linux@3.12.1 -- /home/runner/work/rustdesk-but-private/rustdesk-but-private/./res/vcpkg/aom
+2026-02-07T00:22:00.5676655Z     ffmpeg[amf,core,nvcodec]:x64-linux@7.1#1 -- /home/runner/work/rustdesk-but-private/rustdesk-but-private/./res/vcpkg/ffmpeg
+2026-02-07T00:22:00.5677558Z   * ffnvcodec:x64-linux@12.1.14.0
+2026-02-07T00:22:00.5677888Z     libjpeg-turbo:x64-linux@3.1.1
+2026-02-07T00:22:00.5678802Z     libvpx:x64-linux@1.15.2 -- /home/runner/work/rustdesk-but-private/rustdesk-but-private/./res/vcpkg/libvpx
+2026-02-07T00:22:00.5679797Z     libyuv:x64-linux@1857 -- /home/runner/work/rustdesk-but-private/rustdesk-but-private/./res/vcpkg/libyuv
+2026-02-07T00:22:00.5680854Z     mfx-dispatch:x64-linux@1.35.1#5 -- /home/runner/work/rustdesk-but-private/rustdesk-but-private/./res/vcpkg/mfx-dispatch
+2026-02-07T00:22:00.5681838Z     opus:x64-linux@1.5.2 -- /home/runner/work/rustdesk-but-private/rustdesk-but-private/./res/vcpkg/opus
+2026-02-07T00:22:00.5682398Z   * pkgconf:x64-linux@2.5.1
+2026-02-07T00:22:00.5682713Z   * vcpkg-cmake:x64-linux@2024-04-23
+2026-02-07T00:22:00.5683069Z   * vcpkg-cmake-config:x64-linux@2024-05-23
+2026-02-07T00:22:00.5683464Z   * vcpkg-cmake-get-vars:x64-linux@2025-05-29
+2026-02-07T00:22:00.5683888Z   * vcpkg-pkgconfig-get-modules:x64-linux@2024-04-03
+2026-02-07T00:22:00.5684278Z   * vcpkg-tool-meson:x64-linux@1.8.2
+2026-02-07T00:22:00.5684736Z Additional packages (*) will be modified to complete this operation.
+2026-02-07T00:22:00.5686200Z $VCPKG_BINARY_SOURCES: warning: The 'x-gha' binary caching backend has been removed. Consider using a NuGet-based binary caching provider instead, see extended documentation at https://learn.microsoft.com/vcpkg/users/binarycaching?WT.mc_id=vcpkg_inproduct_cli.
+2026-02-07T00:22:00.5687296Z   on expression: clear;x-gha,readwrite
+2026-02-07T00:22:00.5687596Z                                       ^
+2026-02-07T00:22:00.5687976Z Installing 1/15 vcpkg-cmake-config:x64-linux@2024-05-23...
+2026-02-07T00:22:00.5688557Z Building vcpkg-cmake-config:x64-linux@2024-05-23...
+2026-02-07T00:22:00.5805174Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake-config_x64-linux/share/vcpkg-cmake-config/vcpkg_cmake_config_fixup.cmake
+2026-02-07T00:22:00.5807137Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake-config_x64-linux/share/vcpkg-cmake-config/vcpkg-port-config.cmake
+2026-02-07T00:22:00.5809096Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake-config_x64-linux/share/vcpkg-cmake-config/copyright
+2026-02-07T00:22:00.5827685Z -- Skipping post-build validation due to VCPKG_POLICY_EMPTY_PACKAGE
+2026-02-07T00:22:00.5834886Z Elapsed time to handle vcpkg-cmake-config:x64-linux: 16 ms
+2026-02-07T00:22:00.5836112Z vcpkg-cmake-config:x64-linux package ABI: 43175b50d8e0305881a60fd2bce069c37e085fe6dfb7a7a42d706640d791d142
+2026-02-07T00:22:00.5836702Z Installing 2/15 vcpkg-cmake:x64-linux@2024-04-23...
+2026-02-07T00:22:00.5837068Z Building vcpkg-cmake:x64-linux@2024-04-23...
+2026-02-07T00:22:00.5962053Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake_x64-linux/share/vcpkg-cmake/vcpkg_cmake_configure.cmake
+2026-02-07T00:22:00.5963724Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake_x64-linux/share/vcpkg-cmake/vcpkg_cmake_build.cmake
+2026-02-07T00:22:00.5965228Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake_x64-linux/share/vcpkg-cmake/vcpkg_cmake_install.cmake
+2026-02-07T00:22:00.5966909Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake_x64-linux/share/vcpkg-cmake/vcpkg-port-config.cmake
+2026-02-07T00:22:00.5968677Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake_x64-linux/share/vcpkg-cmake/copyright
+2026-02-07T00:22:00.5986989Z -- Performing post-build validation
+2026-02-07T00:22:00.5998234Z Elapsed time to handle vcpkg-cmake:x64-linux: 16.3 ms
+2026-02-07T00:22:00.5999835Z vcpkg-cmake:x64-linux package ABI: c971020c3ad3b9a8c9352e257a944847125f5ede3b342843c78b7344d86c4416
+2026-02-07T00:22:00.6000555Z Installing 3/15 aom:x64-linux@3.12.1...
+2026-02-07T00:22:00.6001002Z Building aom:x64-linux@3.12.1...
+2026-02-07T00:22:00.6001688Z /home/runner/work/rustdesk-but-private/rustdesk-but-private/./res/vcpkg/aom: info: installing overlay port from here
+2026-02-07T00:22:00.6150165Z -- Fetching https://aomedia.googlesource.com/aom 10aece4157eb79315da205f39e19bf6ab3ee30d0...
+2026-02-07T00:22:02.6886266Z -- Extracting source /opt/artifacts/vcpkg/downloads/aom-10aece4157eb79315da205f39e19bf6ab3ee30d0.tar.gz
+2026-02-07T00:22:02.8390739Z -- Applying patch aom-uninitialized-pointer.diff
+2026-02-07T00:22:02.8419063Z -- Applying patch aom-install.diff
+2026-02-07T00:22:02.8442594Z -- Using source at /opt/artifacts/vcpkg/buildtrees/aom/src/6ab3ee30d0-9aa1729981.clean
+2026-02-07T00:22:02.8493335Z -- Found external ninja('1.13.2').
+2026-02-07T00:22:02.8518712Z -- Configuring x64-linux
+2026-02-07T00:22:08.2142794Z -- Building x64-linux-dbg
+2026-02-07T00:22:58.9276398Z -- Building x64-linux-rel
+2026-02-07T00:24:33.9600392Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/aom_x64-linux/lib/pkgconfig/aom.pc
+2026-02-07T00:24:33.9650172Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/aom_x64-linux/debug/lib/pkgconfig/aom.pc
+2026-02-07T00:24:33.9722346Z -- Installing: /opt/artifacts/vcpkg/packages/aom_x64-linux/share/aom/copyright
+2026-02-07T00:24:33.9728972Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/aom_x64-linux/lib/pkgconfig/aom.pc
+2026-02-07T00:24:33.9755196Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/aom_x64-linux/debug/lib/pkgconfig/aom.pc
+2026-02-07T00:24:33.9807553Z -- Performing post-build validation
+2026-02-07T00:24:33.9829550Z Elapsed time to handle aom:x64-linux: 2.6 min
+2026-02-07T00:24:33.9830387Z aom:x64-linux package ABI: e5b8d306abdde254470a0a58bdd79e8d6139583119b3daab626f56533b042535
+2026-02-07T00:24:33.9831790Z Installing 4/15 ffnvcodec:x64-linux@12.1.14.0...
+2026-02-07T00:24:33.9832534Z Building ffnvcodec:x64-linux@12.1.14.0...
+2026-02-07T00:24:33.9983086Z Downloading https://github.com/FFmpeg/nv-codec-headers/archive/n12.1.14.0.tar.gz -> FFmpeg-nv-codec-headers-n12.1.14.0.tar.gz
+2026-02-07T00:24:34.2093485Z Successfully downloaded FFmpeg-nv-codec-headers-n12.1.14.0.tar.gz
+2026-02-07T00:24:34.2775846Z -- Extracting source /opt/artifacts/vcpkg/downloads/FFmpeg-nv-codec-headers-n12.1.14.0.tar.gz
+2026-02-07T00:24:34.2826652Z -- Using source at /opt/artifacts/vcpkg/buildtrees/ffnvcodec/src/n12.1.14.0-fd4b5ee7ec.clean
+2026-02-07T00:24:34.2886449Z -- Installing: /opt/artifacts/vcpkg/packages/ffnvcodec_x64-linux/lib/pkgconfig/ffnvcodec.pc
+2026-02-07T00:24:34.2890023Z -- Installing: /opt/artifacts/vcpkg/packages/ffnvcodec_x64-linux/debug/lib/pkgconfig/ffnvcodec.pc
+2026-02-07T00:24:34.2895441Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/ffnvcodec_x64-linux/lib/pkgconfig/ffnvcodec.pc
+2026-02-07T00:24:34.2924029Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/ffnvcodec_x64-linux/debug/lib/pkgconfig/ffnvcodec.pc
+2026-02-07T00:24:34.2948095Z -- Installing: /opt/artifacts/vcpkg/packages/ffnvcodec_x64-linux/include
+2026-02-07T00:24:34.2949464Z -- Installing: /opt/artifacts/vcpkg/packages/ffnvcodec_x64-linux/include/ffnvcodec
+2026-02-07T00:24:34.2950847Z -- Installing: /opt/artifacts/vcpkg/packages/ffnvcodec_x64-linux/include/ffnvcodec/dynlink_nvcuvid.h
+2026-02-07T00:24:34.2952575Z -- Installing: /opt/artifacts/vcpkg/packages/ffnvcodec_x64-linux/include/ffnvcodec/dynlink_cuviddec.h
+2026-02-07T00:24:34.2955559Z -- Installing: /opt/artifacts/vcpkg/packages/ffnvcodec_x64-linux/include/ffnvcodec/dynlink_cuda.h
+2026-02-07T00:24:34.2957449Z -- Installing: /opt/artifacts/vcpkg/packages/ffnvcodec_x64-linux/include/ffnvcodec/dynlink_loader.h
+2026-02-07T00:24:34.2959789Z -- Installing: /opt/artifacts/vcpkg/packages/ffnvcodec_x64-linux/include/ffnvcodec/nvEncodeAPI.h
+2026-02-07T00:24:34.2965969Z -- Installing: /opt/artifacts/vcpkg/packages/ffnvcodec_x64-linux/share/ffnvcodec/copyright
+2026-02-07T00:24:34.2991323Z -- Performing post-build validation
+2026-02-07T00:24:34.3015391Z Elapsed time to handle ffnvcodec:x64-linux: 319 ms
+2026-02-07T00:24:34.3016351Z ffnvcodec:x64-linux package ABI: 16a820cc86c84de36d23be3ff720dd8964117bddae0c50eefc8f688e0825684e
+2026-02-07T00:24:34.3016968Z Installing 5/15 vcpkg-cmake-get-vars:x64-linux@2025-05-29...
+2026-02-07T00:24:34.3017405Z Building vcpkg-cmake-get-vars:x64-linux@2025-05-29...
+2026-02-07T00:24:34.3147461Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake-get-vars_x64-linux/share/vcpkg-cmake-get-vars/vcpkg_cmake_get_vars.cmake
+2026-02-07T00:24:34.3149327Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake-get-vars_x64-linux/share/vcpkg-cmake-get-vars/cmake_get_vars
+2026-02-07T00:24:34.3151107Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake-get-vars_x64-linux/share/vcpkg-cmake-get-vars/cmake_get_vars/CMakeLists.txt
+2026-02-07T00:24:34.3153023Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake-get-vars_x64-linux/share/vcpkg-cmake-get-vars/cmake-get-vars.cmake.in
+2026-02-07T00:24:34.3154780Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake-get-vars_x64-linux/share/vcpkg-cmake-get-vars/vcpkg-port-config.cmake
+2026-02-07T00:24:34.3156466Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-cmake-get-vars_x64-linux/share/vcpkg-cmake-get-vars/copyright
+2026-02-07T00:24:34.3173762Z -- Performing post-build validation
+2026-02-07T00:24:34.3185294Z Elapsed time to handle vcpkg-cmake-get-vars:x64-linux: 17 ms
+2026-02-07T00:24:34.3186461Z vcpkg-cmake-get-vars:x64-linux package ABI: a285c4ea074ad8986b418989168af7a3f70e1b43378b6d77348401219158f552
+2026-02-07T00:24:34.3187088Z Installing 6/15 vcpkg-tool-meson:x64-linux@1.8.2...
+2026-02-07T00:24:34.3187479Z Building vcpkg-tool-meson:x64-linux@1.8.2...
+2026-02-07T00:24:34.3337276Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-tool-meson_x64-linux/share/vcpkg-tool-meson/copyright
+2026-02-07T00:24:34.3376306Z Downloading https://github.com/mesonbuild/meson/archive/1.8.2.tar.gz -> meson-1.8.2.tar.gz
+2026-02-07T00:24:34.5625760Z Successfully downloaded meson-1.8.2.tar.gz
+2026-02-07T00:24:34.8755363Z -- Applying patch /opt/artifacts/vcpkg/packages/vcpkg-tool-meson_x64-linux/share/vcpkg-tool-meson/meson-intl.patch
+2026-02-07T00:24:34.8781759Z -- Applying patch /opt/artifacts/vcpkg/packages/vcpkg-tool-meson_x64-linux/share/vcpkg-tool-meson/adjust-python-dep.patch
+2026-02-07T00:24:34.8802724Z -- Applying patch /opt/artifacts/vcpkg/packages/vcpkg-tool-meson_x64-linux/share/vcpkg-tool-meson/adjust-args.patch
+2026-02-07T00:24:34.8823510Z -- Applying patch /opt/artifacts/vcpkg/packages/vcpkg-tool-meson_x64-linux/share/vcpkg-tool-meson/remove-freebsd-pcfile-specialization.patch
+2026-02-07T00:24:34.8844923Z -- Applying patch /opt/artifacts/vcpkg/packages/vcpkg-tool-meson_x64-linux/share/vcpkg-tool-meson/fix-libcpp-enable-assertions.patch
+2026-02-07T00:24:35.0724733Z -- Found Python version '3.12.3 at /usr/bin/python3'
+2026-02-07T00:24:35.0725825Z -- Using meson: /opt/artifacts/vcpkg/downloads/tools/meson-1.8.2-3d2461/meson.py
+2026-02-07T00:24:35.1269355Z -- Performing post-build validation
+2026-02-07T00:24:35.1282501Z Elapsed time to handle vcpkg-tool-meson:x64-linux: 810 ms
+2026-02-07T00:24:35.1283377Z vcpkg-tool-meson:x64-linux package ABI: 992ad117794aeea6da9170733c7ea70a75ca73202b1773058028478057e5c92a
+2026-02-07T00:24:35.1283950Z Installing 7/15 pkgconf:x64-linux@2.5.1...
+2026-02-07T00:24:35.1284275Z Building pkgconf:x64-linux@2.5.1...
+2026-02-07T00:24:35.1443871Z -- Found Python version '3.12.3 at /usr/bin/python3'
+2026-02-07T00:24:35.1444875Z -- Using meson: /opt/artifacts/vcpkg/downloads/tools/meson-1.8.2-3d2461/meson.py
+2026-02-07T00:24:35.1472153Z Downloading https://github.com/pkgconf/pkgconf/archive/pkgconf-2.5.1.tar.gz -> pkgconf-pkgconf-pkgconf-2.5.1.tar.gz
+2026-02-07T00:24:35.3209864Z Successfully downloaded pkgconf-pkgconf-pkgconf-2.5.1.tar.gz
+2026-02-07T00:24:35.3801277Z -- Extracting source /opt/artifacts/vcpkg/downloads/pkgconf-pkgconf-pkgconf-2.5.1.tar.gz
+2026-02-07T00:24:35.3915419Z -- Using source at /opt/artifacts/vcpkg/buildtrees/pkgconf/src/conf-2.5.1-c2c2eca4e6.clean
+2026-02-07T00:24:35.3962180Z -- Found external ninja('1.13.2').
+2026-02-07T00:24:35.3968041Z -- Configuring x64-linux-dbg
+2026-02-07T00:24:35.4000892Z -- Getting CMake variables for x64-linux
+2026-02-07T00:24:35.7020568Z -- Loading CMake variables from /opt/artifacts/vcpkg/buildtrees/pkgconf/cmake-get-vars_C_CXX-x64-linux.cmake.log
+2026-02-07T00:24:36.9204913Z -- Configuring x64-linux-dbg done
+2026-02-07T00:24:36.9205413Z -- Configuring x64-linux-rel
+2026-02-07T00:24:37.6662415Z -- Configuring x64-linux-rel done
+2026-02-07T00:24:37.6666739Z -- Package x64-linux-dbg
+2026-02-07T00:24:38.2620663Z -- Package x64-linux-rel
+2026-02-07T00:24:39.3631322Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/pkgconf_x64-linux/lib/pkgconfig/libpkgconf.pc
+2026-02-07T00:24:39.3635589Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/pkgconf_x64-linux/debug/lib/pkgconfig/libpkgconf.pc
+2026-02-07T00:24:39.3665603Z -- Installing: /opt/artifacts/vcpkg/packages/pkgconf_x64-linux/share/pkgconf/copyright
+2026-02-07T00:24:39.3735952Z -- Adjusted RPATH of '/opt/artifacts/vcpkg/packages/pkgconf_x64-linux/tools/pkgconf/bomtool' (From '' -> To '$ORIGIN:$ORIGIN/../../lib')
+2026-02-07T00:24:39.3777711Z -- Adjusted RPATH of '/opt/artifacts/vcpkg/packages/pkgconf_x64-linux/tools/pkgconf/pkgconf' (From '' -> To '$ORIGIN:$ORIGIN/../../lib')
+2026-02-07T00:24:39.3803548Z -- Performing post-build validation
+2026-02-07T00:24:39.3823685Z Elapsed time to handle pkgconf:x64-linux: 4.3 s
+2026-02-07T00:24:39.3824731Z pkgconf:x64-linux package ABI: 9ac527cef3c5ddc7e0677af056bcdc84e8380ff868050acf971d67ccd67e11a8
+2026-02-07T00:24:39.3825434Z Installing 8/15 vcpkg-pkgconfig-get-modules:x64-linux@2024-04-03...
+2026-02-07T00:24:39.3825950Z Building vcpkg-pkgconfig-get-modules:x64-linux@2024-04-03...
+2026-02-07T00:24:39.3954653Z -- Installing: /opt/artifacts/vcpkg/packages/vcpkg-pkgconfig-get-modules_x64-linux/share/vcpkg-pkgconfig-get-modules/copyright
+2026-02-07T00:24:39.3971141Z -- Performing post-build validation
+2026-02-07T00:24:39.3981786Z Elapsed time to handle vcpkg-pkgconfig-get-modules:x64-linux: 15.8 ms
+2026-02-07T00:24:39.3983239Z vcpkg-pkgconfig-get-modules:x64-linux package ABI: b14e4a74000ab2434804921619dca2111889308debf168f0a4836368ba904eff
+2026-02-07T00:24:39.3984084Z Installing 9/15 amd-amf:x64-linux@1.4.35...
+2026-02-07T00:24:39.3984422Z Building amd-amf:x64-linux@1.4.35...
+2026-02-07T00:24:39.4133279Z Downloading https://github.com/GPUOpen-LibrariesAndSDKs/AMF/archive/v1.4.35.tar.gz -> GPUOpen-LibrariesAndSDKs-AMF-v1.4.35.tar.gz
+2026-02-07T00:24:41.0046142Z Successfully downloaded GPUOpen-LibrariesAndSDKs-AMF-v1.4.35.tar.gz
+2026-02-07T00:24:41.4430842Z -- Extracting source /opt/artifacts/vcpkg/downloads/GPUOpen-LibrariesAndSDKs-AMF-v1.4.35.tar.gz
+2026-02-07T00:24:43.6049856Z -- Using source at /opt/artifacts/vcpkg/buildtrees/amd-amf/src/v1.4.35-4afa30e3bb.clean
+2026-02-07T00:24:43.6051031Z -- Up-to-date: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF
+2026-02-07T00:24:43.6052023Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components
+2026-02-07T00:24:43.6052981Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/PreAnalysis.h
+2026-02-07T00:24:43.6055494Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/VideoDecoderUVD.h
+2026-02-07T00:24:43.6057355Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/VideoCapture.h
+2026-02-07T00:24:43.6059318Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/Capture.h
+2026-02-07T00:24:43.6061432Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/CursorCapture.h
+2026-02-07T00:24:43.6063289Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/FFMPEGAudioEncoder.h
+2026-02-07T00:24:43.6065398Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/FFMPEGAudioDecoder.h
+2026-02-07T00:24:43.6067201Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/AMFXInput.h
+2026-02-07T00:24:43.6069368Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/DisplayCapture.h
+2026-02-07T00:24:43.6071188Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/ColorSpace.h
+2026-02-07T00:24:43.6073204Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/FFMPEGVideoDecoder.h
+2026-02-07T00:24:43.6074969Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/VideoConverter.h
+2026-02-07T00:24:43.6076943Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/FFMPEGEncoderHEVC.h
+2026-02-07T00:24:43.6079050Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/VideoEncoderVCE.h
+2026-02-07T00:24:43.6081261Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/VideoEncoderAV1.h
+2026-02-07T00:24:43.6083489Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/HQScaler.h
+2026-02-07T00:24:43.6085354Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/FRC.h
+2026-02-07T00:24:43.6087359Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/FFMPEGComponents.h
+2026-02-07T00:24:43.6089380Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/SupportedCodecs.h
+2026-02-07T00:24:43.6091266Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/PreProcessing.h
+2026-02-07T00:24:43.6093160Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/ZCamLiveStream.h
+2026-02-07T00:24:43.6095130Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/VQEnhancer.h
+2026-02-07T00:24:43.6097034Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/FFMPEGEncoderH264.h
+2026-02-07T00:24:43.6099066Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/AudioCapture.h
+2026-02-07T00:24:43.6101169Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/FFMPEGAudioConverter.h
+2026-02-07T00:24:43.6103120Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/FFMPEGFileDemuxer.h
+2026-02-07T00:24:43.6104931Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/FFMPEGFileMuxer.h
+2026-02-07T00:24:43.6106847Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/ComponentCaps.h
+2026-02-07T00:24:43.6108923Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/ChromaKey.h
+2026-02-07T00:24:43.6111045Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/FFMPEGEncoderAV1.h
+2026-02-07T00:24:43.6112831Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/VideoEncoderHEVC.h
+2026-02-07T00:24:43.6115072Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/VideoStitch.h
+2026-02-07T00:24:43.6117027Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/Ambisonic2SRenderer.h
+2026-02-07T00:24:43.6119182Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/Component.h
+2026-02-07T00:24:43.6121520Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/components/MediaSource.h
+2026-02-07T00:24:43.6123212Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core
+2026-02-07T00:24:43.6124612Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Trace.h
+2026-02-07T00:24:43.6126582Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Context.h
+2026-02-07T00:24:43.6129131Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Platform.h
+2026-02-07T00:24:43.6131162Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Surface.h
+2026-02-07T00:24:43.6133154Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Compute.h
+2026-02-07T00:24:43.6135229Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Factory.h
+2026-02-07T00:24:43.6137095Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Buffer.h
+2026-02-07T00:24:43.6139262Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/ComputeFactory.h
+2026-02-07T00:24:43.6141227Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/AudioBuffer.h
+2026-02-07T00:24:43.6143129Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/VulkanAMF.h
+2026-02-07T00:24:43.6144982Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Plane.h
+2026-02-07T00:24:43.6147024Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Variant.h
+2026-02-07T00:24:43.6150791Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/PropertyStorageEx.h
+2026-02-07T00:24:43.6152414Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/PropertyStorage.h
+2026-02-07T00:24:43.6154387Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/D3D12AMF.h
+2026-02-07T00:24:43.6156222Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Result.h
+2026-02-07T00:24:43.6158163Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/CurrentTime.h
+2026-02-07T00:24:43.6160301Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Interface.h
+2026-02-07T00:24:43.6162216Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Dump.h
+2026-02-07T00:24:43.6164202Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Version.h
+2026-02-07T00:24:43.6166025Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Data.h
+2026-02-07T00:24:43.6168003Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/include/AMF/core/Debug.h
+2026-02-07T00:24:43.6172175Z -- Installing: /opt/artifacts/vcpkg/packages/amd-amf_x64-linux/share/amd-amf/copyright
+2026-02-07T00:24:43.6197424Z -- Performing post-build validation
+2026-02-07T00:24:43.6230704Z Elapsed time to handle amd-amf:x64-linux: 4.2 s
+2026-02-07T00:24:43.6231793Z amd-amf:x64-linux package ABI: 3a3e3585ac58ccbaca735e0e94ec0d660520ef0ce704eb9dcd249084bc61d5e1
+2026-02-07T00:24:43.6232612Z Installing 10/15 ffmpeg[amf,core,nvcodec]:x64-linux@7.1#1...
+2026-02-07T00:24:43.6233239Z Building ffmpeg[amf,core,nvcodec]:x64-linux@7.1#1...
+2026-02-07T00:24:43.6234137Z /home/runner/work/rustdesk-but-private/rustdesk-but-private/./res/vcpkg/ffmpeg: info: installing overlay port from here
+2026-02-07T00:24:43.6398153Z Downloading https://github.com/ffmpeg/ffmpeg/archive/n7.1.tar.gz -> ffmpeg-ffmpeg-n7.1.tar.gz
+2026-02-07T00:24:43.9415279Z Successfully downloaded ffmpeg-ffmpeg-n7.1.tar.gz
+2026-02-07T00:24:44.0380844Z -- Extracting source /opt/artifacts/vcpkg/downloads/ffmpeg-ffmpeg-n7.1.tar.gz
+2026-02-07T00:24:44.5701341Z -- Applying patch 0001-create-lib-libraries.patch
+2026-02-07T00:24:44.5737802Z -- Applying patch 0002-fix-msvc-link.patch
+2026-02-07T00:24:44.5770630Z -- Applying patch 0003-fix-windowsinclude.patch
+2026-02-07T00:24:44.5792127Z -- Applying patch 0004-dependencies.patch
+2026-02-07T00:24:44.5829561Z -- Applying patch 0005-fix-nasm.patch
+2026-02-07T00:24:44.5853649Z -- Applying patch 0007-fix-lib-naming.patch
+2026-02-07T00:24:44.5885851Z -- Applying patch 0013-define-WINVER.patch
+2026-02-07T00:24:44.5906059Z -- Applying patch 0020-fix-aarch64-libswscale.patch
+2026-02-07T00:24:44.5925991Z -- Applying patch 0024-fix-osx-host-c11.patch
+2026-02-07T00:24:44.5957854Z -- Applying patch 0040-ffmpeg-add-av_stream_get_first_dts-for-chromium.patch
+2026-02-07T00:24:44.5984685Z -- Applying patch 0041-add-const-for-opengl-definition.patch
+2026-02-07T00:24:44.6007199Z -- Applying patch 0043-fix-miss-head.patch
+2026-02-07T00:24:44.6027310Z -- Applying patch patch/0001-avcodec-amfenc-add-query_timeout-option-for-h264-hev.patch
+2026-02-07T00:24:44.6051629Z -- Applying patch patch/0002-libavcodec-amfenc-reconfig-when-bitrate-change.patch
+2026-02-07T00:24:44.6073381Z -- Applying patch patch/0004-videotoolbox-changing-bitrate.patch
+2026-02-07T00:24:44.6097481Z -- Applying patch patch/0005-mediacodec-changing-bitrate.patch
+2026-02-07T00:24:44.6125145Z -- Applying patch patch/0006-dlopen-libva.patch
+2026-02-07T00:24:44.6167458Z -- Applying patch patch/0007-fix-linux-configure.patch
+2026-02-07T00:24:44.6199668Z -- Applying patch patch/0008-remove-amf-loop-query.patch
+2026-02-07T00:24:44.6220420Z -- Applying patch patch/0009-fix-nvenc-reconfigure-blur.patch
+2026-02-07T00:24:44.6243977Z -- Applying patch patch/0010.disable-loading-DLLs-from-app-dir.patch
+2026-02-07T00:24:44.6263508Z -- Applying patch patch/0011-android-mediacodec-encode-align-64.patch
+2026-02-07T00:24:44.6284709Z -- Applying patch patch/0012-fix-macos-big-sur-CVBufferCopyAttachments.patch
+2026-02-07T00:24:44.6306551Z -- Using source at /opt/artifacts/vcpkg/buildtrees/ffmpeg/src/n7.1-beba8c424f.clean
+2026-02-07T00:24:44.6357085Z -- Found external ninja('1.13.2').
+2026-02-07T00:24:44.6381955Z -- Getting CMake variables for x64-linux
+2026-02-07T00:24:44.9412116Z -- Loading CMake variables from /opt/artifacts/vcpkg/buildtrees/ffmpeg/cmake-get-vars_C_CXX-x64-linux.cmake.log
+2026-02-07T00:24:44.9454697Z -- Building Options: --disable-shared --enable-static --enable-pic --disable-everything --disable-programs --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-network --disable-appkit --disable-coreimage --disable-metal --disable-sdl2 --disable-securetransport --disable-vulkan --disable-audiotoolbox --disable-v4l2-m2m --disable-debug --disable-valgrind-backtrace --disable-large-tests --disable-bzlib --disable-avdevice --enable-avcodec --enable-avformat --disable-avfilter --disable-swresample --disable-swscale --disable-postproc --enable-decoder=h264 --enable-decoder=hevc --enable-parser=h264 --enable-parser=hevc --enable-bsf=h264_mp4toannexb --enable-bsf=hevc_mp4toannexb  --enable-bsf=h264_metadata --enable-bsf=hevc_metadata --enable-muxer=mp4 --enable-protocol=file --target-os=linux --enable-pthreads --disable-vdpau --enable-cuda --enable-ffnvcodec --enable-encoder=h264_nvenc --enable-encoder=hevc_nvenc --enable-hwaccel=h264_nvdec --enable-hwaccel=hevc_nvdec --enable-amf  --enable-encoder=h264_amf --enable-encoder=hevc_amf --enable-hwaccel=h264_vaapi --enable-hwaccel=hevc_vaapi --enable-encoder=h264_vaapi --enable-encoder=hevc_vaapi     --enable-cuda_llvm  --cc=cc --cxx=c++ --nm=nm --ar='ar' --ranlib=ranlib --strip=strip --enable-cross-compile --pkg-config=/bin/pkg-config --pkg-config-flags=--static
+2026-02-07T00:24:44.9463450Z -- Building Release Options: --enable-optimizations --extra-ldflags=-L"/opt/artifacts/vcpkg/installed/x64-linux/lib"
+2026-02-07T00:24:44.9464044Z -- Building ffmpeg for Release
+2026-02-07T00:25:51.5530086Z -- Building Debug Options: --disable-optimizations --extra-ldflags=-L"/opt/artifacts/vcpkg/installed/x64-linux/debug/lib"
+2026-02-07T00:25:51.5531147Z -- Building ffmpeg for Debug
+2026-02-07T00:26:30.5185742Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/ffmpeg_x64-linux/lib/pkgconfig/libavcodec.pc
+2026-02-07T00:26:30.5191069Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/ffmpeg_x64-linux/lib/pkgconfig/libavformat.pc
+2026-02-07T00:26:30.5196165Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/ffmpeg_x64-linux/lib/pkgconfig/libavutil.pc
+2026-02-07T00:26:30.5270653Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/ffmpeg_x64-linux/debug/lib/pkgconfig/libavcodec.pc
+2026-02-07T00:26:30.5276309Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/ffmpeg_x64-linux/debug/lib/pkgconfig/libavformat.pc
+2026-02-07T00:26:30.5282001Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/ffmpeg_x64-linux/debug/lib/pkgconfig/libavutil.pc
+2026-02-07T00:26:30.5385416Z -- Dependencies (release): -pthread;va-drm;va-x11;m;drm;va;atomic;X11;pthread;xcb;Xau;Xdmcp
+2026-02-07T00:26:30.5386812Z -- Dependencies (debug):   -pthread;va-drm;va-x11;m;drm;va;atomic;X11;pthread;xcb;Xau;Xdmcp
+2026-02-07T00:26:30.5403426Z -- Installing: /opt/artifacts/vcpkg/packages/ffmpeg_x64-linux/share/ffmpeg/copyright
+2026-02-07T00:26:30.5491597Z -- Performing post-build validation
+2026-02-07T00:26:30.5553770Z Elapsed time to handle ffmpeg:x64-linux: 1.8 min
+2026-02-07T00:26:30.5554660Z ffmpeg:x64-linux package ABI: 9f67119ca9c6c24f92d2e54dcfeeaec457cfe1da3c92d06147cf47c318bc19fd
+2026-02-07T00:26:30.5555261Z Installing 11/15 libjpeg-turbo:x64-linux@3.1.1...
+2026-02-07T00:26:30.5555612Z Building libjpeg-turbo:x64-linux@3.1.1...
+2026-02-07T00:26:30.5720707Z Downloading https://github.com/libjpeg-turbo/libjpeg-turbo/archive/3.1.1.tar.gz -> libjpeg-turbo-libjpeg-turbo-3.1.1.tar.gz
+2026-02-07T00:26:30.8667732Z Successfully downloaded libjpeg-turbo-libjpeg-turbo-3.1.1.tar.gz
+2026-02-07T00:26:30.9356059Z -- Extracting source /opt/artifacts/vcpkg/downloads/libjpeg-turbo-libjpeg-turbo-3.1.1.tar.gz
+2026-02-07T00:26:30.9854891Z -- Applying patch add-options-for-exes-docs-headers.patch
+2026-02-07T00:26:30.9885855Z -- Applying patch workaround_cmake_system_processor.patch
+2026-02-07T00:26:30.9911740Z -- Using source at /opt/artifacts/vcpkg/buildtrees/libjpeg-turbo/src/3.1.1-23af682a76.clean
+2026-02-07T00:26:30.9973827Z -- Found external ninja('1.13.2').
+2026-02-07T00:26:30.9999587Z -- Configuring x64-linux
+2026-02-07T00:26:32.0529295Z -- Building x64-linux-dbg
+2026-02-07T00:26:35.9203023Z -- Building x64-linux-rel
+2026-02-07T00:26:50.0633690Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/libjpeg-turbo_x64-linux/lib/pkgconfig/libjpeg.pc
+2026-02-07T00:26:50.0637547Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/libjpeg-turbo_x64-linux/lib/pkgconfig/libturbojpeg.pc
+2026-02-07T00:26:50.0689242Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/libjpeg-turbo_x64-linux/debug/lib/pkgconfig/libjpeg.pc
+2026-02-07T00:26:50.0693593Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/libjpeg-turbo_x64-linux/debug/lib/pkgconfig/libturbojpeg.pc
+2026-02-07T00:26:50.0787701Z -- Installing: /opt/artifacts/vcpkg/packages/libjpeg-turbo_x64-linux/share/libjpeg-turbo/copyright
+2026-02-07T00:26:50.0856783Z -- Performing post-build validation
+2026-02-07T00:26:50.0878706Z Elapsed time to handle libjpeg-turbo:x64-linux: 20 s
+2026-02-07T00:26:50.0879620Z libjpeg-turbo:x64-linux package ABI: 11ce786bd740e20996d94a610cd00dabee889ce0955d6e42858bcf9f4b7f89c7
+2026-02-07T00:26:50.0880472Z Installing 12/15 libvpx:x64-linux@1.15.2...
+2026-02-07T00:26:50.0880951Z Building libvpx:x64-linux@1.15.2...
+2026-02-07T00:26:50.0881640Z /home/runner/work/rustdesk-but-private/rustdesk-but-private/./res/vcpkg/libvpx: info: installing overlay port from here
+2026-02-07T00:26:50.1044942Z Downloading https://github.com/webmproject/libvpx/archive/v1.15.2.tar.gz -> webmproject-libvpx-v1.15.2.tar.gz
+2026-02-07T00:26:50.3785530Z Successfully downloaded webmproject-libvpx-v1.15.2.tar.gz
+2026-02-07T00:26:50.4521582Z -- Extracting source /opt/artifacts/vcpkg/downloads/webmproject-libvpx-v1.15.2.tar.gz
+2026-02-07T00:26:50.5615189Z -- Applying patch 0003-add-uwp-v142-and-v143-support.patch
+2026-02-07T00:26:50.5644880Z -- Applying patch 0004-remove-library-suffixes.patch
+2026-02-07T00:26:50.5668335Z -- Using source at /opt/artifacts/vcpkg/buildtrees/libvpx/src/v1.15.2-0f523e7cb7.clean
+2026-02-07T00:26:50.5723883Z -- Found external ninja('1.13.2').
+2026-02-07T00:26:50.5749008Z -- Getting CMake variables for x64-linux
+2026-02-07T00:26:50.8875446Z -- Loading CMake variables from /opt/artifacts/vcpkg/buildtrees/libvpx/cmake-get-vars_C_CXX-x64-linux.cmake.log
+2026-02-07T00:26:50.8881527Z -- Build info. Target: x86_64-linux-gcc; Options: --disable-examples --disable-tools --disable-docs --disable-unit-tests --enable-pic --enable-static --disable-shared
+2026-02-07T00:26:50.8882317Z -- Configuring libvpx for Release
+2026-02-07T00:26:52.6176088Z -- Building libvpx for Release
+2026-02-07T00:27:21.4712191Z -- Installing libvpx for Release
+2026-02-07T00:27:21.6056255Z -- Configuring libvpx for Debug
+2026-02-07T00:27:23.2009495Z -- Building libvpx for Debug
+2026-02-07T00:27:57.8053177Z -- Installing libvpx for Debug
+2026-02-07T00:27:57.9815849Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/libvpx_x64-linux/lib/pkgconfig/vpx.pc
+2026-02-07T00:27:57.9848629Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/libvpx_x64-linux/debug/lib/pkgconfig/vpx.pc
+2026-02-07T00:27:57.9878933Z -- Installing: /opt/artifacts/vcpkg/packages/libvpx_x64-linux/share/libvpx/copyright
+2026-02-07T00:27:57.9908341Z -- Performing post-build validation
+2026-02-07T00:27:57.9930016Z Elapsed time to handle libvpx:x64-linux: 1.1 min
+2026-02-07T00:27:57.9931150Z libvpx:x64-linux package ABI: e80a15b2f00c5e0151d00dc732711a8bd3933917e9d3331eb77548b350f0e367
+2026-02-07T00:27:57.9932005Z Installing 13/15 libyuv:x64-linux@1857...
+2026-02-07T00:27:57.9932528Z Building libyuv:x64-linux@1857...
+2026-02-07T00:27:57.9933239Z /home/runner/work/rustdesk-but-private/rustdesk-but-private/./res/vcpkg/libyuv: info: installing overlay port from here
+2026-02-07T00:27:58.0077398Z -- Fetching https://chromium.googlesource.com/libyuv/libyuv 0faf8dd0e004520a61a603a4d2996d5ecc80dc3f...
+2026-02-07T00:27:58.3741234Z -- Extracting source /opt/artifacts/vcpkg/downloads/libyuv-0faf8dd0e004520a61a603a4d2996d5ecc80dc3f.tar.gz
+2026-02-07T00:27:58.3935407Z -- Applying patch fix-cmakelists.patch
+2026-02-07T00:27:58.3956526Z -- Using source at /opt/artifacts/vcpkg/buildtrees/libyuv/src/5ecc80dc3f-992dc86b90.clean
+2026-02-07T00:27:58.4000003Z -- Found external ninja('1.13.2').
+2026-02-07T00:27:58.4025231Z -- Getting CMake variables for x64-linux
+2026-02-07T00:27:58.7208976Z -- Loading CMake variables from /opt/artifacts/vcpkg/buildtrees/libyuv/cmake-get-vars_C_CXX-x64-linux.cmake.log
+2026-02-07T00:27:58.7252892Z -- Configuring x64-linux-dbg
+2026-02-07T00:27:59.0829811Z -- Configuring x64-linux-rel
+2026-02-07T00:27:59.3994367Z -- Building x64-linux-dbg
+2026-02-07T00:28:01.0731326Z -- Building x64-linux-rel
+2026-02-07T00:28:10.6067193Z -- Installing: /opt/artifacts/vcpkg/packages/libyuv_x64-linux/share/libyuv/copyright
+2026-02-07T00:28:10.6074677Z -- Installing: /opt/artifacts/vcpkg/packages/libyuv_x64-linux/share/libyuv/usage
+2026-02-07T00:28:10.6176500Z -- Adjusted RPATH of '/opt/artifacts/vcpkg/packages/libyuv_x64-linux/debug/tools/yuvconvert' (From '' -> To '$ORIGIN:$ORIGIN/../lib')
+2026-02-07T00:28:10.6265431Z -- Adjusted RPATH of '/opt/artifacts/vcpkg/packages/libyuv_x64-linux/tools/yuvconvert' (From '' -> To '$ORIGIN:$ORIGIN/../lib')
+2026-02-07T00:28:10.6292630Z -- Performing post-build validation
+2026-02-07T00:28:10.6334832Z Elapsed time to handle libyuv:x64-linux: 13 s
+2026-02-07T00:28:10.6335997Z libyuv:x64-linux package ABI: 60c5048f4867908d7c9c94ee09fb1db587a9de29705d1fc470ccf77df3b1ef9b
+2026-02-07T00:28:10.6336931Z Installing 14/15 mfx-dispatch:x64-linux@1.35.1#5...
+2026-02-07T00:28:10.6337543Z Building mfx-dispatch:x64-linux@1.35.1#5...
+2026-02-07T00:28:10.6339482Z /home/runner/work/rustdesk-but-private/rustdesk-but-private/./res/vcpkg/mfx-dispatch: info: installing overlay port from here
+2026-02-07T00:28:10.6486907Z Downloading https://github.com/lu-zero/mfx_dispatch/commit/d6241243f85a0d947bdfe813006686a930edef24.patch?full_index=1 -> fix-missing-cstdint-import-d6241243f85a0d947bdfe813006686a930edef24.patch
+2026-02-07T00:28:10.7592048Z Successfully downloaded fix-missing-cstdint-import-d6241243f85a0d947bdfe813006686a930edef24.patch
+2026-02-07T00:28:10.8274678Z Downloading https://github.com/lu-zero/mfx_dispatch/archive/1.35.1.tar.gz -> lu-zero-mfx_dispatch-1.35.1.tar.gz
+2026-02-07T00:28:10.9857733Z Successfully downloaded lu-zero-mfx_dispatch-1.35.1.tar.gz
+2026-02-07T00:28:11.0483571Z -- Extracting source /opt/artifacts/vcpkg/downloads/lu-zero-mfx_dispatch-1.35.1.tar.gz
+2026-02-07T00:28:11.0568316Z -- Applying patch fix-unresolved-symbol.patch
+2026-02-07T00:28:11.0592218Z -- Applying patch fix-pkgconf.patch
+2026-02-07T00:28:11.0613442Z -- Applying patch 0003-upgrade-cmake-3.14.patch
+2026-02-07T00:28:11.0634266Z -- Applying patch /opt/artifacts/vcpkg/downloads/fix-missing-cstdint-import-d6241243f85a0d947bdfe813006686a930edef24.patch
+2026-02-07T00:28:11.0655166Z -- Using source at /opt/artifacts/vcpkg/buildtrees/mfx-dispatch/src/1.35.1-3914ad8155.clean
+2026-02-07T00:28:11.0700441Z -- Found external ninja('1.13.2').
+2026-02-07T00:28:11.0718980Z -- Getting CMake variables for x64-linux-dbg
+2026-02-07T00:28:11.3738966Z -- Getting CMake variables for x64-linux-rel
+2026-02-07T00:28:11.6790833Z -- Generating configure for x64-linux
+2026-02-07T00:28:15.7910291Z -- Finished generating configure for x64-linux
+2026-02-07T00:28:15.7977205Z -- Configuring x64-linux-dbg
+2026-02-07T00:28:18.6830988Z -- Configuring x64-linux-rel
+2026-02-07T00:28:21.0237442Z -- Building x64-linux-dbg
+2026-02-07T00:28:21.9798674Z -- Installing x64-linux-dbg
+2026-02-07T00:28:22.1110960Z -- Building x64-linux-rel
+2026-02-07T00:28:23.1588884Z -- Installing x64-linux-rel
+2026-02-07T00:28:23.2882097Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/mfx-dispatch_x64-linux/lib/pkgconfig/libmfx.pc
+2026-02-07T00:28:23.2912554Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/mfx-dispatch_x64-linux/debug/lib/pkgconfig/libmfx.pc
+2026-02-07T00:28:23.2943145Z -- Installing: /opt/artifacts/vcpkg/packages/mfx-dispatch_x64-linux/share/mfx-dispatch/copyright
+2026-02-07T00:28:23.2972809Z -- Performing post-build validation
+2026-02-07T00:28:23.3001363Z Elapsed time to handle mfx-dispatch:x64-linux: 13 s
+2026-02-07T00:28:23.3002121Z mfx-dispatch:x64-linux package ABI: 1d9f5e1c3520249210a2b37b5a8cdd3ada9fadc0687a83bbee6eb2fdccf5080b
+2026-02-07T00:28:23.3002695Z Installing 15/15 opus:x64-linux@1.5.2...
+2026-02-07T00:28:23.3003007Z Building opus:x64-linux@1.5.2...
+2026-02-07T00:28:23.3003677Z /home/runner/work/rustdesk-but-private/rustdesk-but-private/./res/vcpkg/opus: info: installing overlay port from here
+2026-02-07T00:28:23.3165359Z Downloading https://github.com/xiph/opus/archive/v1.5.2.tar.gz -> xiph-opus-v1.5.2.tar.gz
+2026-02-07T00:28:23.5563630Z Successfully downloaded xiph-opus-v1.5.2.tar.gz
+2026-02-07T00:28:23.6361017Z -- Extracting source /opt/artifacts/vcpkg/downloads/xiph-opus-v1.5.2.tar.gz
+2026-02-07T00:28:23.7073281Z -- Applying patch fix-pkgconfig-version.patch
+2026-02-07T00:28:23.7097723Z -- Using source at /opt/artifacts/vcpkg/buildtrees/opus/src/v1.5.2-81ed242155.clean
+2026-02-07T00:28:23.7155678Z -- Found external ninja('1.13.2').
+2026-02-07T00:28:23.7181571Z -- Configuring x64-linux
+2026-02-07T00:28:25.6496906Z -- Building x64-linux-dbg
+2026-02-07T00:28:28.2966418Z -- Building x64-linux-rel
+2026-02-07T00:28:35.0264120Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/opus_x64-linux/lib/pkgconfig/opus.pc
+2026-02-07T00:28:35.0295933Z -- Fixing pkgconfig file: /opt/artifacts/vcpkg/packages/opus_x64-linux/debug/lib/pkgconfig/opus.pc
+2026-02-07T00:28:35.0325764Z -- Installing: /opt/artifacts/vcpkg/packages/opus_x64-linux/share/opus/copyright
+2026-02-07T00:28:35.0357515Z -- Performing post-build validation
+2026-02-07T00:28:35.0377768Z Elapsed time to handle opus:x64-linux: 12 s
+2026-02-07T00:28:35.0379076Z opus:x64-linux package ABI: 0d845c4932c1ded668f0d00e90a0d8687fc381c389cceaabecfababefc80d937
+2026-02-07T00:28:35.0393767Z Installed contents are licensed to you by owners. Microsoft is not responsible for, nor does it grant any licenses to, third-party packages.
+2026-02-07T00:28:35.0395736Z Some packages did not declare an SPDX license. Check the `copyright` file for each package for more information about their licensing.
+2026-02-07T00:28:35.0397216Z Packages installed in this vcpkg installation declare the following licenses:
+2026-02-07T00:28:35.0397884Z Apache-2.0
+2026-02-07T00:28:35.0398211Z BSD-2-Clause
+2026-02-07T00:28:35.0398695Z BSD-3-Clause
+2026-02-07T00:28:35.0398972Z MIT
+2026-02-07T00:28:35.0399340Z aom provides CMake targets:
+2026-02-07T00:28:35.0399587Z 
+2026-02-07T00:28:35.0399982Z   # this is heuristically generated, and may not be correct
+2026-02-07T00:28:35.0400609Z   find_package(aom CONFIG REQUIRED)
+2026-02-07T00:28:35.0409058Z   target_link_libraries(main PRIVATE unofficial::aom)
+2026-02-07T00:28:35.0409449Z 
+2026-02-07T00:28:35.0409712Z aom provides pkg-config modules:
+2026-02-07T00:28:35.0409996Z 
+2026-02-07T00:28:35.0410361Z   # Alliance for Open Media AV1 codec library v3.12.1.
+2026-02-07T00:28:35.0410827Z   aom
+2026-02-07T00:28:35.0410976Z 
+2026-02-07T00:28:35.0411280Z ffmpeg provides pkg-config modules:
+2026-02-07T00:28:35.0411572Z 
+2026-02-07T00:28:35.0411763Z   # FFmpeg codec library
+2026-02-07T00:28:35.0412087Z   libavcodec
+2026-02-07T00:28:35.0412256Z 
+2026-02-07T00:28:35.0412407Z   # FFmpeg container format library
+2026-02-07T00:28:35.0412667Z   libavformat
+2026-02-07T00:28:35.0412772Z 
+2026-02-07T00:28:35.0412894Z   # FFmpeg utility library
+2026-02-07T00:28:35.0413092Z   libavutil
+2026-02-07T00:28:35.0413182Z 
+2026-02-07T00:28:35.0413528Z libjpeg-turbo is compatible with built-in implementation-agnostic CMake targets:
+2026-02-07T00:28:35.0413839Z 
+2026-02-07T00:28:35.0413973Z     find_package(JPEG REQUIRED)
+2026-02-07T00:28:35.0414324Z     target_link_libraries(main PRIVATE JPEG::JPEG)
+2026-02-07T00:28:35.0414526Z 
+2026-02-07T00:28:35.0414774Z libjpeg-turbo provides CMake targets for the TurboJPEG C API:
+2026-02-07T00:28:35.0415011Z 
+2026-02-07T00:28:35.0415185Z     find_package(libjpeg-turbo CONFIG REQUIRED)
+2026-02-07T00:28:35.0416214Z     target_link_libraries(main PRIVATE $<IF:$<TARGET_EXISTS:libjpeg-turbo::turbojpeg>,libjpeg-turbo::turbojpeg,libjpeg-turbo::turbojpeg-static>)
+2026-02-07T00:28:35.0416902Z 
+2026-02-07T00:28:35.0417179Z libvpx provides CMake targets:
+2026-02-07T00:28:35.0417442Z 
+2026-02-07T00:28:35.0417835Z   # this is heuristically generated, and may not be correct
+2026-02-07T00:28:35.0418330Z   find_package(unofficial-libvpx CONFIG REQUIRED)
+2026-02-07T00:28:35.0419017Z   target_link_libraries(main PRIVATE unofficial::libvpx::libvpx)
+2026-02-07T00:28:35.0419269Z 
+2026-02-07T00:28:35.0419416Z libvpx provides pkg-config modules:
+2026-02-07T00:28:35.0419578Z 
+2026-02-07T00:28:35.0419742Z   # WebM Project VPx codec implementation
+2026-02-07T00:28:35.0420126Z   vpx
+2026-02-07T00:28:35.0420294Z 
+2026-02-07T00:28:35.0420539Z libyuv provides CMake targets:
+2026-02-07T00:28:35.0420795Z 
+2026-02-07T00:28:35.0421084Z     find_package(libyuv CONFIG REQUIRED)
+2026-02-07T00:28:35.0421664Z     target_link_libraries(main PRIVATE yuv)
+2026-02-07T00:28:35.0422264Z mfx-dispatch provides pkg-config modules:
+2026-02-07T00:28:35.0422973Z 
+2026-02-07T00:28:35.0423311Z   # Intel Media SDK Dispatched static library
+2026-02-07T00:28:35.0424036Z   libmfx
+2026-02-07T00:28:35.0424211Z 
+2026-02-07T00:28:35.0424465Z opus provides CMake targets:
+2026-02-07T00:28:35.0424746Z 
+2026-02-07T00:28:35.0425151Z   # this is heuristically generated, and may not be correct
+2026-02-07T00:28:35.0425834Z   find_package(Opus CONFIG REQUIRED)
+2026-02-07T00:28:35.0426497Z   target_link_libraries(main PRIVATE Opus::opus)
+2026-02-07T00:28:35.0426862Z 
+2026-02-07T00:28:35.0427147Z opus provides pkg-config modules:
+2026-02-07T00:28:35.0427451Z 
+2026-02-07T00:28:35.0427713Z   # Opus IETF audio codec ( build)
+2026-02-07T00:28:35.0428123Z   opus
+2026-02-07T00:28:35.0428288Z 
+2026-02-07T00:28:35.0429014Z All requested installations completed successfully in: 6.6 min

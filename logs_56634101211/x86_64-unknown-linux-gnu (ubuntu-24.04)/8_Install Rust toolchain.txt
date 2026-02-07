@@ -1,0 +1,242 @@
+﻿2026-02-07T00:28:35.1250754Z ##[group]Run dtolnay/rust-toolchain@v1
+2026-02-07T00:28:35.1251048Z with:
+2026-02-07T00:28:35.1251217Z   toolchain: stable
+2026-02-07T00:28:35.1251411Z   targets: x86_64-unknown-linux-gnu
+2026-02-07T00:28:35.1251650Z env:
+2026-02-07T00:28:35.1251842Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.1252161Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.1252790Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.1294613Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.1295199Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.1295792Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.1296056Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.1296274Z ##[endgroup]
+2026-02-07T00:28:35.1316142Z ##[group]Run : parse toolchain version
+2026-02-07T00:28:35.1316484Z [36;1m: parse toolchain version[0m
+2026-02-07T00:28:35.1316729Z [36;1mif [[ -z $toolchain ]]; then[0m
+2026-02-07T00:28:35.1317209Z [36;1m  # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070[0m
+2026-02-07T00:28:35.1317752Z [36;1m  echo "'toolchain' is a required input" >&2[0m
+2026-02-07T00:28:35.1318016Z [36;1m  exit 1[0m
+2026-02-07T00:28:35.1318322Z [36;1melif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then[0m
+2026-02-07T00:28:35.1318859Z [36;1m  if [[ Linux == macOS ]]; then[0m
+2026-02-07T00:28:35.1319352Z [36;1m    echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+2026-02-07T00:28:35.1319828Z [36;1m  else[0m
+2026-02-07T00:28:35.1320191Z [36;1m    echo "toolchain=1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+2026-02-07T00:28:35.1320612Z [36;1m  fi[0m
+2026-02-07T00:28:35.1320875Z [36;1melif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then[0m
+2026-02-07T00:28:35.1321372Z [36;1m  echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT[0m
+2026-02-07T00:28:35.1321802Z [36;1melif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then[0m
+2026-02-07T00:28:35.1322282Z [36;1m  echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT[0m
+2026-02-07T00:28:35.1322743Z [36;1melse[0m
+2026-02-07T00:28:35.1322952Z [36;1m  echo "toolchain=$toolchain" >> $GITHUB_OUTPUT[0m
+2026-02-07T00:28:35.1323222Z [36;1mfi[0m
+2026-02-07T00:28:35.1352118Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.1352423Z env:
+2026-02-07T00:28:35.1352617Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.1352941Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.1353558Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.1395075Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.1395820Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.1396415Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.1396678Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.1396898Z   toolchain: stable
+2026-02-07T00:28:35.1397079Z ##[endgroup]
+2026-02-07T00:28:35.1492896Z ##[group]Run : construct rustup command line
+2026-02-07T00:28:35.1493198Z [36;1m: construct rustup command line[0m
+2026-02-07T00:28:35.1493619Z [36;1mecho "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT[0m
+2026-02-07T00:28:35.1494207Z [36;1mecho "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT[0m
+2026-02-07T00:28:35.1494658Z [36;1mecho "downgrade=" >> $GITHUB_OUTPUT[0m
+2026-02-07T00:28:35.1521537Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.1521849Z env:
+2026-02-07T00:28:35.1522057Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.1522384Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.1523014Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.1565071Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.1565644Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.1566237Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.1566500Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.1566733Z   targets: x86_64-unknown-linux-gnu
+2026-02-07T00:28:35.1566957Z   components: 
+2026-02-07T00:28:35.1567122Z ##[endgroup]
+2026-02-07T00:28:35.1643287Z ##[group]Run : set $CARGO_HOME
+2026-02-07T00:28:35.1643539Z [36;1m: set $CARGO_HOME[0m
+2026-02-07T00:28:35.1643839Z [36;1mecho CARGO_HOME=${CARGO_HOME:-"$HOME/.cargo"} >> $GITHUB_ENV[0m
+2026-02-07T00:28:35.1670787Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.1671108Z env:
+2026-02-07T00:28:35.1671305Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.1671623Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.1672255Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.1714625Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.1715211Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.1715814Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.1716081Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.1716301Z ##[endgroup]
+2026-02-07T00:28:35.1787584Z ##[group]Run : install rustup if needed
+2026-02-07T00:28:35.1787876Z [36;1m: install rustup if needed[0m
+2026-02-07T00:28:35.1788144Z [36;1mif ! command -v rustup &>/dev/null; then[0m
+2026-02-07T00:28:35.1789114Z [36;1m  curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://sh.rustup.rs | sh -s -- --default-toolchain none -y[0m
+2026-02-07T00:28:35.1789814Z [36;1m  echo "$CARGO_HOME/bin" >> $GITHUB_PATH[0m
+2026-02-07T00:28:35.1790064Z [36;1mfi[0m
+2026-02-07T00:28:35.1816470Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.1816778Z env:
+2026-02-07T00:28:35.1816971Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.1817290Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.1817900Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.1860135Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.1860719Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.1861507Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.1861771Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.1862001Z   CARGO_HOME: /home/runner/.cargo
+2026-02-07T00:28:35.1862218Z ##[endgroup]
+2026-02-07T00:28:35.1935922Z ##[group]Run rustup toolchain install stable --target x86_64-unknown-linux-gnu --profile minimal --no-self-update
+2026-02-07T00:28:35.1936661Z [36;1mrustup toolchain install stable --target x86_64-unknown-linux-gnu --profile minimal --no-self-update[0m
+2026-02-07T00:28:35.1963379Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.1963692Z env:
+2026-02-07T00:28:35.1963894Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.1964221Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.1964847Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.2006858Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.2007442Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.2008032Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.2008299Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.2008704Z   CARGO_HOME: /home/runner/.cargo
+2026-02-07T00:28:35.2008924Z ##[endgroup]
+2026-02-07T00:28:35.4720027Z info: syncing channel updates for 'stable-x86_64-unknown-linux-gnu'
+2026-02-07T00:28:35.6449701Z info: latest update on 2026-01-22, rust version 1.93.0 (254b59607 2026-01-19)
+2026-02-07T00:28:35.6770008Z info: component 'rust-std' for target 'x86_64-unknown-linux-gnu' is up to date
+2026-02-07T00:28:35.6794265Z 
+2026-02-07T00:28:35.6891635Z   stable-x86_64-unknown-linux-gnu unchanged - rustc 1.93.0 (254b59607 2026-01-19)
+2026-02-07T00:28:35.6892080Z 
+2026-02-07T00:28:35.6956722Z ##[group]Run rustup default stable
+2026-02-07T00:28:35.6957297Z [36;1mrustup default stable[0m
+2026-02-07T00:28:35.7001357Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.7001856Z env:
+2026-02-07T00:28:35.7002158Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.7002677Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.7003753Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.7093067Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.7094162Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.7095317Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.7095829Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.7096274Z   CARGO_HOME: /home/runner/.cargo
+2026-02-07T00:28:35.7096717Z ##[endgroup]
+2026-02-07T00:28:35.7225807Z info: using existing install for 'stable-x86_64-unknown-linux-gnu'
+2026-02-07T00:28:35.7519907Z info: default toolchain set to 'stable-x86_64-unknown-linux-gnu'
+2026-02-07T00:28:35.7520853Z 
+2026-02-07T00:28:35.7616069Z   stable-x86_64-unknown-linux-gnu unchanged - rustc 1.93.0 (254b59607 2026-01-19)
+2026-02-07T00:28:35.7616775Z 
+2026-02-07T00:28:35.7673643Z ##[group]Run : create cachekey
+2026-02-07T00:28:35.7674294Z [36;1m: create cachekey[0m
+2026-02-07T00:28:35.7675353Z [36;1mDATE=$(rustc +stable --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')[0m
+2026-02-07T00:28:35.7676742Z [36;1mHASH=$(rustc +stable --version --verbose | sed -ne 's/^commit-hash: //p')[0m
+2026-02-07T00:28:35.7677769Z [36;1mecho "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT[0m
+2026-02-07T00:28:35.7721709Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.7722434Z env:
+2026-02-07T00:28:35.7723022Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.7723717Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.7725408Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.7806766Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.7807497Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.7808168Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.7808905Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.7809219Z   CARGO_HOME: /home/runner/.cargo
+2026-02-07T00:28:35.7809533Z ##[endgroup]
+2026-02-07T00:28:35.8449668Z ##[group]Run : disable incremental compilation
+2026-02-07T00:28:35.8450087Z [36;1m: disable incremental compilation[0m
+2026-02-07T00:28:35.8450519Z [36;1mif [ -z "${CARGO_INCREMENTAL+set}" ]; then[0m
+2026-02-07T00:28:35.8451146Z [36;1m  echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV[0m
+2026-02-07T00:28:35.8451488Z [36;1mfi[0m
+2026-02-07T00:28:35.8481538Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.8481932Z env:
+2026-02-07T00:28:35.8482373Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.8482759Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.8483473Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.8525831Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.8526542Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.8527185Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.8527672Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.8527963Z   CARGO_HOME: /home/runner/.cargo
+2026-02-07T00:28:35.8528279Z ##[endgroup]
+2026-02-07T00:28:35.8603504Z ##[group]Run : enable colors in Cargo output
+2026-02-07T00:28:35.8603819Z [36;1m: enable colors in Cargo output[0m
+2026-02-07T00:28:35.8604114Z [36;1mif [ -z "${CARGO_TERM_COLOR+set}" ]; then[0m
+2026-02-07T00:28:35.8604418Z [36;1m  echo CARGO_TERM_COLOR=always >> $GITHUB_ENV[0m
+2026-02-07T00:28:35.8604680Z [36;1mfi[0m
+2026-02-07T00:28:35.8632741Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.8633050Z env:
+2026-02-07T00:28:35.8633251Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.8633563Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.8634190Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.8676424Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.8677012Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.8677615Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.8677877Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.8678126Z   CARGO_HOME: /home/runner/.cargo
+2026-02-07T00:28:35.8678345Z   CARGO_INCREMENTAL: 0
+2026-02-07T00:28:35.8678700Z ##[endgroup]
+2026-02-07T00:28:35.8750996Z ##[group]Run : enable Cargo sparse registry
+2026-02-07T00:28:35.8751315Z [36;1m: enable Cargo sparse registry[0m
+2026-02-07T00:28:35.8751651Z [36;1m# implemented in 1.66, stabilized in 1.68, made default in 1.70[0m
+2026-02-07T00:28:35.8752310Z [36;1mif [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol ]; then[0m
+2026-02-07T00:28:35.8752997Z [36;1m  if rustc +stable --version --verbose | grep -q '^release: 1\.6[89]\.'; then[0m
+2026-02-07T00:28:35.8753530Z [36;1m    touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+2026-02-07T00:28:35.8754037Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV[0m
+2026-02-07T00:28:35.8754515Z [36;1m  elif rustc +stable --version --verbose | grep -q '^release: 1\.6[67]\.'; then[0m
+2026-02-07T00:28:35.8755218Z [36;1m    touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+2026-02-07T00:28:35.8755702Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV[0m
+2026-02-07T00:28:35.8756011Z [36;1m  fi[0m
+2026-02-07T00:28:35.8756179Z [36;1mfi[0m
+2026-02-07T00:28:35.8783756Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.8784063Z env:
+2026-02-07T00:28:35.8784264Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.8784575Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.8785253Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.8827086Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.8827849Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.8828633Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.8828900Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.8829138Z   CARGO_HOME: /home/runner/.cargo
+2026-02-07T00:28:35.8829354Z   CARGO_INCREMENTAL: 0
+2026-02-07T00:28:35.8829546Z   CARGO_TERM_COLOR: always
+2026-02-07T00:28:35.8829737Z ##[endgroup]
+2026-02-07T00:28:35.9216886Z ##[group]Run : work around spurious network errors in curl 8.0
+2026-02-07T00:28:35.9217612Z [36;1m: work around spurious network errors in curl 8.0[0m
+2026-02-07T00:28:35.9218771Z [36;1m# https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation[0m
+2026-02-07T00:28:35.9219771Z [36;1mif rustc +stable --version --verbose | grep -q '^release: 1\.7[01]\.'; then[0m
+2026-02-07T00:28:35.9220556Z [36;1m  echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV[0m
+2026-02-07T00:28:35.9221087Z [36;1mfi[0m
+2026-02-07T00:28:35.9263778Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.9264372Z env:
+2026-02-07T00:28:35.9264724Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.9265300Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.9266458Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.9326375Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.9326981Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.9327586Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.9327857Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.9328086Z   CARGO_HOME: /home/runner/.cargo
+2026-02-07T00:28:35.9328306Z   CARGO_INCREMENTAL: 0
+2026-02-07T00:28:35.9328684Z   CARGO_TERM_COLOR: always
+2026-02-07T00:28:35.9328896Z ##[endgroup]
+2026-02-07T00:28:35.9557472Z ##[group]Run rustc +stable --version --verbose
+2026-02-07T00:28:35.9557799Z [36;1mrustc +stable --version --verbose[0m
+2026-02-07T00:28:35.9587163Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-02-07T00:28:35.9587487Z env:
+2026-02-07T00:28:35.9587684Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:28:35.9588000Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:28:35.9588883Z   ACTIONS_CACHE_URL: https://artifactcache.actions.githubusercontent.com/zfUXeMjPl9NADYhmbreFa1LSx5gQ08zILVCNDZSRJruBJJzNpB/
+2026-02-07T00:28:35.9630860Z   ACTIONS_RUNTIME_TOKEN: ***
+2026-02-07T00:28:35.9631438Z   VCPKG_DEFAULT_BINARY_CACHE: /home/runner/work/rustdesk-but-private/rustdesk-but-private/969f6665-88a2-4c98-938e-ca9259871fec/vcpkg_cache
+2026-02-07T00:28:35.9632036Z   RUNVCPKG_VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.9632297Z   VCPKG_ROOT: /opt/artifacts/vcpkg
+2026-02-07T00:28:35.9632535Z   CARGO_HOME: /home/runner/.cargo
+2026-02-07T00:28:35.9632764Z   CARGO_INCREMENTAL: 0
+2026-02-07T00:28:35.9632963Z   CARGO_TERM_COLOR: always
+2026-02-07T00:28:35.9633358Z ##[endgroup]
+2026-02-07T00:28:35.9817836Z rustc 1.93.0 (254b59607 2026-01-19)
+2026-02-07T00:28:35.9818749Z binary: rustc
+2026-02-07T00:28:35.9819592Z commit-hash: 254b59607d4417e9dffbc307138ae5c86280fe4c
+2026-02-07T00:28:35.9820384Z commit-date: 2026-01-19
+2026-02-07T00:28:35.9820816Z host: x86_64-unknown-linux-gnu
+2026-02-07T00:28:35.9821114Z release: 1.93.0
+2026-02-07T00:28:35.9821385Z LLVM version: 21.1.8

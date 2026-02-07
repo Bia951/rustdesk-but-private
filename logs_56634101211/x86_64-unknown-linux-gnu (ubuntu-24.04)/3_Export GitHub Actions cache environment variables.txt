@@ -1,0 +1,15 @@
+﻿2026-02-07T00:21:15.9447327Z ##[group]Run actions/github-script@v6
+2026-02-07T00:21:15.9447627Z with:
+2026-02-07T00:21:15.9448257Z   script: core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+2026-02-07T00:21:15.9449298Z   github-token: ***
+2026-02-07T00:21:15.9449490Z   debug: false
+2026-02-07T00:21:15.9449684Z   user-agent: actions/github-script
+2026-02-07T00:21:15.9449934Z   result-encoding: json
+2026-02-07T00:21:15.9450311Z   retries: 0
+2026-02-07T00:21:15.9450522Z   retry-exempt-status-codes: 400,401,403,404,422
+2026-02-07T00:21:15.9450784Z env:
+2026-02-07T00:21:15.9450970Z   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+2026-02-07T00:21:15.9451278Z   VCPKG_COMMIT_ID: 120deac3062162151622ca4860575a33844ba10b
+2026-02-07T00:21:15.9451554Z ##[endgroup]

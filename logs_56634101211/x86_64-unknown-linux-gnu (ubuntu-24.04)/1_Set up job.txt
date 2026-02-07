@@ -1,0 +1,50 @@
+﻿2026-02-07T00:20:18.9607668Z Current runner version: '2.331.0'
+2026-02-07T00:20:18.9642241Z ##[group]Runner Image Provisioner
+2026-02-07T00:20:18.9643485Z Hosted Compute Agent
+2026-02-07T00:20:18.9644562Z Version: 20260123.484
+2026-02-07T00:20:18.9645582Z Commit: 6bd6555ca37d84114959e1c76d2c01448ff61c5d
+2026-02-07T00:20:18.9646674Z Build Date: 2026-01-23T19:41:17Z
+2026-02-07T00:20:18.9647847Z Worker ID: {176bfd14-85e8-4b22-9492-d63517ceb7b9}
+2026-02-07T00:20:18.9649277Z Azure Region: eastus2
+2026-02-07T00:20:18.9650133Z ##[endgroup]
+2026-02-07T00:20:18.9652681Z ##[group]Operating System
+2026-02-07T00:20:18.9653605Z Ubuntu
+2026-02-07T00:20:18.9654439Z 24.04.3
+2026-02-07T00:20:18.9655169Z LTS
+2026-02-07T00:20:18.9656045Z ##[endgroup]
+2026-02-07T00:20:18.9656818Z ##[group]Runner Image
+2026-02-07T00:20:18.9657935Z Image: ubuntu-24.04
+2026-02-07T00:20:18.9659135Z Version: 20260201.15.1
+2026-02-07T00:20:18.9660939Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260201.15/images/ubuntu/Ubuntu2404-Readme.md
+2026-02-07T00:20:18.9663812Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260201.15
+2026-02-07T00:20:18.9665583Z ##[endgroup]
+2026-02-07T00:20:18.9670319Z ##[group]GITHUB_TOKEN Permissions
+2026-02-07T00:20:18.9673083Z Actions: write
+2026-02-07T00:20:18.9673989Z ArtifactMetadata: write
+2026-02-07T00:20:18.9675037Z Attestations: write
+2026-02-07T00:20:18.9675935Z Checks: write
+2026-02-07T00:20:18.9676721Z Contents: write
+2026-02-07T00:20:18.9677719Z Deployments: write
+2026-02-07T00:20:18.9678851Z Discussions: write
+2026-02-07T00:20:18.9679738Z Issues: write
+2026-02-07T00:20:18.9680695Z Metadata: read
+2026-02-07T00:20:18.9681645Z Models: read
+2026-02-07T00:20:18.9682425Z Packages: write
+2026-02-07T00:20:18.9683353Z Pages: write
+2026-02-07T00:20:18.9684408Z PullRequests: write
+2026-02-07T00:20:18.9685313Z RepositoryProjects: write
+2026-02-07T00:20:18.9686499Z SecurityEvents: write
+2026-02-07T00:20:18.9687364Z Statuses: write
+2026-02-07T00:20:18.9688170Z ##[endgroup]
+2026-02-07T00:20:18.9691341Z Secret source: Actions
+2026-02-07T00:20:18.9692374Z Prepare workflow directory
+2026-02-07T00:20:19.0244830Z Prepare all required actions
+2026-02-07T00:20:19.0301838Z Getting action download info
+2026-02-07T00:20:19.3665229Z Download action repository 'jlumbroso/free-disk-space@v1.3.1' (SHA:54081f138730dfa15788a46383842cd2f914a1be)
+2026-02-07T00:20:19.6286134Z Download action repository 'actions/github-script@v6' (SHA:d7906e4ad0b1822421a7e6a35d5ca353c962f410)
+2026-02-07T00:20:19.8141876Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-02-07T00:20:19.8494341Z Download action repository 'lukka/run-vcpkg@v11' (SHA:7d259227a1fb6471a0253dd5ab7419835228f7d7)
+2026-02-07T00:20:20.1698830Z Download action repository 'dtolnay/rust-toolchain@v1' (SHA:e97e2d8cc328f1b50210efc529dca0028893a2d9)
+2026-02-07T00:20:20.3189537Z Download action repository 'Swatinem/rust-cache@v2' (SHA:779680da715d629ac1d338a641029a2f4372abb5)
+2026-02-07T00:20:20.5737734Z Download action repository 'actions-rs/cargo@v1' (SHA:844f36862e911db73fe0815f00a4a2602c279505)
+2026-02-07T00:20:20.9787231Z Complete job name: x86_64-unknown-linux-gnu (ubuntu-24.04)
