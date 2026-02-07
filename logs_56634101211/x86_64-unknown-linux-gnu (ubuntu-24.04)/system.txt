@@ -1,8 +1,0 @@
-2026-02-07T00:20:16.4350000Z Job is about to start running on the hosted runner: GitHub Actions 1000000466
-2026-02-07T00:20:16.4350000Z Job is waiting for a hosted runner to come online.
-2026-02-07T00:20:16.4250000Z Evaluating build.if
-2026-02-07T00:20:16.4250000Z Evaluating: success()
-2026-02-07T00:20:16.4250000Z Result: true
-2026-02-07T00:20:16.4260000Z Requested labels: ubuntu-24.04
-2026-02-07T00:20:16.4260000Z Job defined at: Bia951/rustdesk-but-private/.github/workflows/ci.yml@refs/heads/master
-2026-02-07T00:20:16.4260000Z Waiting for a runner to pick up this job...
