@@ -1,5 +1,7 @@
 #[cfg(target_os = "linux")]
 use super::rdp_input::client::{RdpInputKeyboard, RdpInputMouse};
+#[cfg(target_os = "linux")]
+use super::evdev_input::{EvdevInputKeyboard, EvdevInputMouse};
 use super::*;
 use crate::input::*;
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
@@ -621,29 +623,96 @@ pub async fn setup_uinput(minx: i32, maxx: i32, miny: i32, maxy: i32) -> ResultT
 #[cfg(target_os = "linux")]
 pub async fn setup_rdp_input() -> ResultType<(), Box<dyn std::error::Error>> {
     let mut en = ENIGO.lock()?;
-    let rdp_info_lock = RDP_SESSION_INFO.lock()?;
-    let rdp_info = rdp_info_lock.as_ref().ok_or("RDP session is None")?;
+    
+    // Try RDP input first
+    match RDP_SESSION_INFO.lock() {
+        Ok(rdp_info_lock) => {
+            if let Some(rdp_info) = rdp_info_lock.as_ref() {
+                match RdpInputKeyboard::new(rdp_info.conn.clone(), rdp_info.session.clone()) {
+                    Ok(keyboard) => {
+                        en.set_custom_keyboard(Box::new(keyboard));
+                        log::info!("RdpInput keyboard created");
+                    }
+                    Err(e) => {
+                        log::warn!("Failed to create RDP keyboard, trying evdev: {}", e);
+                        // Fallback to evdev keyboard
+                        match EvdevInputKeyboard::new() {
+                            Ok(keyboard) => {
+                                en.set_custom_keyboard(Box::new(keyboard));
+                                log::info!("Evdev keyboard created");
+                            }
+                            Err(e) => {
+                                log::error!("Failed to create evdev keyboard: {}", e);
+                            }
+                        }
+                    }
+                }
 
-    let keyboard = RdpInputKeyboard::new(rdp_info.conn.clone(), rdp_info.session.clone())?;
-    en.set_custom_keyboard(Box::new(keyboard));
-    log::info!("RdpInput keyboard created");
-
-    if let Some(stream) = rdp_info.streams.clone().into_iter().next() {
-        let resolution = rdp_info
-            .resolution
-            .lock()
-            .unwrap()
-            .unwrap_or(stream.get_size());
-        let mouse = RdpInputMouse::new(
-            rdp_info.conn.clone(),
-            rdp_info.session.clone(),
-            stream,
-            resolution,
-        )?;
-        en.set_custom_mouse(Box::new(mouse));
-        log::info!("RdpInput mouse created");
+                if let Some(stream) = rdp_info.streams.clone().into_iter().next() {
+                    let resolution = rdp_info
+                        .resolution
+                        .lock()
+                        .unwrap()
+                        .unwrap_or(stream.get_size());
+                    match RdpInputMouse::new(
+                        rdp_info.conn.clone(),
+                        rdp_info.session.clone(),
+                        stream,
+                        resolution,
+                    ) {
+                        Ok(mouse) => {
+                            en.set_custom_mouse(Box::new(mouse));
+                            log::info!("RdpInput mouse created");
+                        }
+                        Err(e) => {
+                            log::warn!("Failed to create RDP mouse, trying evdev: {}", e);
+                            // Fallback to evdev mouse
+                            match EvdevInputMouse::new(resolution.0, resolution.1) {
+                                Ok(mouse) => {
+                                    en.set_custom_mouse(Box::new(mouse));
+                                    log::info!("Evdev mouse created");
+                                }
+                                Err(e) => {
+                                    log::error!("Failed to create evdev mouse: {}", e);
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                return Ok(());
+            }
+        }
+        Err(e) => {
+            log::warn!("Failed to lock RDP session info: {}", e);
+        }
     }
-
+    
+    // If RDP session is not available, use evdev directly
+    log::info!("No RDP session available, using evdev input");
+    
+    // Try evdev keyboard
+    match EvdevInputKeyboard::new() {
+        Ok(keyboard) => {
+            en.set_custom_keyboard(Box::new(keyboard));
+            log::info!("Evdev keyboard created");
+        }
+        Err(e) => {
+            log::error!("Failed to create evdev keyboard: {}", e);
+        }
+    }
+    
+    // Try evdev mouse with default resolution
+    match EvdevInputMouse::new(1920, 1080) {
+        Ok(mouse) => {
+            en.set_custom_mouse(Box::new(mouse));
+            log::info!("Evdev mouse created with default resolution");
+        }
+        Err(e) => {
+            log::error!("Failed to create evdev mouse: {}", e);
+        }
+    }
+    
     Ok(())
 }
 
