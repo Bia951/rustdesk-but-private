@@ -159,6 +159,12 @@ void showServerSettings(OverlayDialogManager dialogManager,
       ServerConfig.fromOptions(options), dialogManager, setState);
 }
 
+enum ServerType {
+  waydesk,
+  rustdeskOfficial,
+  custom
+}
+
 void showServerSettingsWithValue(
     ServerConfig serverConfig,
     OverlayDialogManager dialogManager,
@@ -172,6 +178,14 @@ void showServerSettingsWithValue(
   RxString idServerMsg = ''.obs;
   RxString relayServerMsg = ''.obs;
   RxString apiServerMsg = ''.obs;
+  Rx<ServerType> selectedServerType = ServerType.custom.obs;
+
+  // 检测当前服务器类型
+  if (serverConfig.idServer == 'rs-ny.rustdesk.com' && serverConfig.key == 'OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=') {
+    selectedServerType.value = ServerType.rustdeskOfficial;
+  } else if (serverConfig.idServer == 'rustdesk.itstomorin.cn') {
+    selectedServerType.value = ServerType.waydesk;
+  }
 
   final controllers = [idCtrl, relayCtrl, apiCtrl, keyCtrl];
   final errMsgs = [
@@ -201,7 +215,7 @@ void showServerSettingsWithValue(
 
     Widget buildField(
         String label, TextEditingController controller, String errorMsg,
-        {String? Function(String?)? validator, bool autofocus = false}) {
+        {String? Function(String?)? validator, bool autofocus = false, bool readOnly = false}) {
       if (isDesktop || isWeb) {
         return Row(
           children: [
@@ -220,6 +234,7 @@ void showServerSettingsWithValue(
                 ),
                 validator: validator,
                 autofocus: autofocus,
+                readOnly: readOnly,
               ).workaroundFreezeLinuxMint(),
             ),
           ],
@@ -233,6 +248,7 @@ void showServerSettingsWithValue(
           errorText: errorMsg.isEmpty ? null : errorMsg,
         ),
         validator: validator,
+        readOnly: readOnly,
       ).workaroundFreezeLinuxMint();
     }
 
@@ -249,30 +265,113 @@ void showServerSettingsWithValue(
           child: Obx(() => Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  buildField(translate('ID Server'), idCtrl, idServerMsg.value,
-                      autofocus: true),
-                  SizedBox(height: 8),
-                  if (!isIOS && !isWeb) ...[
-                    buildField(translate('Relay Server'), relayCtrl,
-                        relayServerMsg.value),
-                    SizedBox(height: 8),
-                  ],
-                  buildField(
-                    translate('API Server'),
-                    apiCtrl,
-                    apiServerMsg.value,
-                    validator: (v) {
-                      if (v != null && v.isNotEmpty) {
-                        if (!(v.startsWith('http://') ||
-                            v.startsWith("https://"))) {
-                          return translate("invalid_http");
-                        }
-                      }
-                      return null;
-                    },
+                  // 服务器选择选项
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '选择服务器',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        SizedBox(height: 8),
+                        RadioListTile<ServerType>(
+                          title: Text('使用waydesk服务器'),
+                          value: ServerType.waydesk,
+                          groupValue: selectedServerType.value,
+                          onChanged: (value) {
+                            selectedServerType.value = value!;
+                            idCtrl.text = 'rustdesk.itstomorin.cn';
+                            relayCtrl.text = '';
+                            apiCtrl.text = 'https://rustdesk.itstomorin.cn';
+                            keyCtrl.text = '';
+                          },
+                        ),
+                        RadioListTile<ServerType>(
+                          title: Text('使用rustdesk官方服务器'),
+                          value: ServerType.rustdeskOfficial,
+                          groupValue: selectedServerType.value,
+                          onChanged: (value) {
+                            selectedServerType.value = value!;
+                            idCtrl.text = 'rs-ny.rustdesk.com';
+                            relayCtrl.text = '';
+                            apiCtrl.text = '';
+                            keyCtrl.text = 'OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=';
+                          },
+                        ),
+                        RadioListTile<ServerType>(
+                          title: Text('自定义服务器'),
+                          value: ServerType.custom,
+                          groupValue: selectedServerType.value,
+                          onChanged: (value) {
+                            selectedServerType.value = value!;
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 8),
-                  buildField('Key', keyCtrl, ''),
+                  SizedBox(height: 16),
+                  
+                  // 服务器配置选项
+                  if (selectedServerType.value == ServerType.custom) ...[
+                    buildField(translate('ID Server'), idCtrl, idServerMsg.value,
+                        autofocus: true),
+                    SizedBox(height: 8),
+                    if (!isIOS && !isWeb) ...[
+                      buildField(translate('Relay Server'), relayCtrl,
+                          relayServerMsg.value),
+                      SizedBox(height: 8),
+                    ],
+                    buildField(
+                      translate('API Server'),
+                      apiCtrl,
+                      apiServerMsg.value,
+                      validator: (v) {
+                        if (v != null && v.isNotEmpty) {
+                          if (!(v.startsWith('http://') ||
+                              v.startsWith("https://"))) {
+                            return translate("invalid_http");
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 8),
+                    buildField('Key', keyCtrl, ''),
+                  ] else ...[
+                    // 非自定义服务器时显示只读的配置信息
+                    Opacity(
+                      opacity: 0.7,
+                      child: Column(
+                        children: [
+                          buildField(translate('ID Server'), idCtrl, '',
+                              autofocus: false, readOnly: true),
+                          SizedBox(height: 8),
+                          if (!isIOS && !isWeb) ...[
+                            buildField(translate('Relay Server'), relayCtrl,
+                                '', readOnly: true),
+                            SizedBox(height: 8),
+                          ],
+                          if (selectedServerType.value != ServerType.rustdeskOfficial) ...[
+                            buildField(
+                              translate('API Server'),
+                              apiCtrl,
+                              '',
+                              validator: null,
+                              readOnly: true,
+                            ),
+                            SizedBox(height: 8),
+                          ],
+                          buildField('Key', keyCtrl, '', readOnly: true),
+                        ],
+                      ),
+                    ),
+                  ],
+                  
                   if (isInProgress)
                     Padding(
                       padding: EdgeInsets.only(top: 8),
