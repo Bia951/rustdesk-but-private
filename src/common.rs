@@ -128,7 +128,45 @@ pub fn global_init() -> bool {
             crate::server::wayland::init();
         }
     }
+    // Auto update config on startup if all required fields are empty
+    std::thread::spawn(|| {
+        update_config_on_startup();
+    });
     true
+}
+
+/// Auto update config on startup if all required fields are empty
+pub fn update_config_on_startup() {
+    use hbb_common::config::Config;
+    // Check if all required fields are empty
+    let api_server = Config::get_option("api-server");
+    let rendezvous_server = Config::get_option("custom-rendezvous-server");
+    let relay_server = Config::get_option("relay-server");
+    let key = Config::get_option("key");
+    
+    if api_server.is_empty() && rendezvous_server.is_empty() && relay_server.is_empty() && key.is_empty() {
+        // All fields are empty, try to get config from highest priority source
+        let _ = tokio::runtime::Builder::new_current_thread()
+            .build()
+            .unwrap()
+            .block_on(async {
+                // Get options from highest priority source
+                let options = crate::ipc::get_options_async().await;
+                // Set the options if they exist
+                if let Some(api) = options.get("api-server") {
+                    Config::set_option("api-server".into(), api.clone());
+                }
+                if let Some(rendezvous) = options.get("custom-rendezvous-server") {
+                    Config::set_option("custom-rendezvous-server".into(), rendezvous.clone());
+                }
+                if let Some(relay) = options.get("relay-server") {
+                    Config::set_option("relay-server".into(), relay.clone());
+                }
+                if let Some(k) = options.get("key") {
+                    Config::set_option("key".into(), k.clone());
+                }
+            });
+    }
 }
 
 pub fn global_clean() {}
@@ -1107,9 +1145,8 @@ pub fn get_local_option(key: &str) -> String {
     let v = LocalConfig::get_option(key);
     if key == keys::OPTION_ENABLE_UDP_PUNCH || key == keys::OPTION_ENABLE_IPV6_PUNCH {
         if v.is_empty() {
-            if !is_public(&Config::get_rendezvous_server()) {
-                return "N".to_owned();
-            }
+            // Always enable UDP punch by default regardless of server type
+            return "Y".to_owned();
         }
     }
     v
@@ -1733,7 +1770,10 @@ pub fn create_symmetric_key_msg(their_pk_b: [u8; 32]) -> (Bytes, Bytes, secretbo
 
 #[inline]
 pub fn using_public_server() -> bool {
-    crate::get_custom_rendezvous_server(get_option("custom-rendezvous-server")).is_empty()
+    let server = Config::get_rendezvous_server();
+    let key = get_option("key");
+    // Check if server is rs-ny.rustdesk.com and key matches the official one
+    server.contains("rs-ny.rustdesk.com") && key == "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw="
 }
 
 pub struct ThrottledInterval {
