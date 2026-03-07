@@ -146,26 +146,30 @@ pub fn update_config_on_startup() {
     
     if api_server.is_empty() && rendezvous_server.is_empty() && relay_server.is_empty() && key.is_empty() {
         // All fields are empty, try to get config from highest priority source
-        let _ = tokio::runtime::Builder::new_current_thread()
-            .build()
-            .unwrap()
-            .block_on(async {
-                // Get options from highest priority source
-                let options = crate::ipc::get_options_async().await;
-                // Set the options if they exist
-                if let Some(api) = options.get("api-server") {
-                    Config::set_option("api-server".into(), api.clone());
-                }
-                if let Some(rendezvous) = options.get("custom-rendezvous-server") {
-                    Config::set_option("custom-rendezvous-server".into(), rendezvous.clone());
-                }
-                if let Some(relay) = options.get("relay-server") {
-                    Config::set_option("relay-server".into(), relay.clone());
-                }
-                if let Some(k) = options.get("key") {
-                    Config::set_option("key".into(), k.clone());
-                }
-            });
+        #[cfg(not(any(target_os = "android", target_os = "ios")))]
+        {
+            let _ = tokio::runtime::Builder::new_current_thread()
+                .build()
+                .unwrap()
+                .block_on(async {
+                    // Get options from highest priority source
+                    let options = crate::ipc::get_options_async().await;
+                    // Set the options if they exist
+                    if let Some(api) = options.get("api-server") {
+                        Config::set_option("api-server".into(), api.clone());
+                    }
+                    if let Some(rendezvous) = options.get("custom-rendezvous-server") {
+                        Config::set_option("custom-rendezvous-server".into(), rendezvous.clone());
+                    }
+                    if let Some(relay) = options.get("relay-server") {
+                        Config::set_option("relay-server".into(), relay.clone());
+                    }
+                    if let Some(k) = options.get("key") {
+                        Config::set_option("key".into(), k.clone());
+                    }
+                });
+        }
+        // For iOS and Android, we skip this step as ipc module is not available
     }
 }
 
