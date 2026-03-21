@@ -1071,6 +1071,16 @@ pub fn is_setup(name: &str) -> bool {
 }
 
 pub fn get_custom_rendezvous_server(custom: String) -> String {
+    const WAYDESK_SERVER: &str = "rustdesk.itstomorin.cn";
+    const RUSTDESK_SERVER: &str = "rs-ny.rustdesk.com";
+
+    fn fallback_server_by_provider() -> String {
+        match Config::get_option(config::keys::OPTION_SERVER_PROVIDER).as_str() {
+            "1" => RUSTDESK_SERVER.to_owned(),
+            _ => WAYDESK_SERVER.to_owned(),
+        }
+    }
+
     #[cfg(windows)]
     if let Ok(lic) = crate::platform::windows::get_license_from_exe_name() {
         if !lic.host.is_empty() {
@@ -1083,7 +1093,7 @@ pub fn get_custom_rendezvous_server(custom: String) -> String {
     if !config::PROD_RENDEZVOUS_SERVER.read().unwrap().is_empty() {
         return config::PROD_RENDEZVOUS_SERVER.read().unwrap().clone();
     }
-    "".to_owned()
+    fallback_server_by_provider()
 }
 
 #[inline]
@@ -1105,6 +1115,16 @@ pub fn get_api_server(api: String, custom: String) -> String {
 }
 
 fn get_api_server_(api: String, custom: String) -> String {
+    const WAYDESK_API: &str = "https://rustdesk.itstomorin.cn";
+    const RUSTDESK_API: &str = "https://admin.rustdesk.com";
+
+    fn fallback_api_by_provider() -> String {
+        match Config::get_option(config::keys::OPTION_SERVER_PROVIDER).as_str() {
+            "1" => RUSTDESK_API.to_owned(),
+            _ => WAYDESK_API.to_owned(),
+        }
+    }
+
     #[cfg(windows)]
     if let Ok(lic) = crate::platform::windows::get_license_from_exe_name() {
         if !lic.api.is_empty() {
@@ -1123,7 +1143,7 @@ fn get_api_server_(api: String, custom: String) -> String {
             return format!("http://{}", s);
         }
     }
-    "https://rustdesk.itstomorin.cn".to_owned()
+    fallback_api_by_provider()
 }
 
 #[inline]
@@ -1555,6 +1575,8 @@ pub fn decode64<T: AsRef<[u8]>>(input: T) -> Result<Vec<u8>, base64::DecodeError
 }
 
 pub async fn get_key(sync: bool) -> String {
+    const WAYDESK_KEY: &str = "hrPrVtYmAHGReIR552swYsGny0kreUNfppUfHb9M4m8=";
+
     #[cfg(windows)]
     if let Ok(lic) = crate::platform::windows::get_license_from_exe_name() {
         if !lic.key.is_empty() {
@@ -1571,7 +1593,11 @@ pub async fn get_key(sync: bool) -> String {
         options.remove("key").unwrap_or_default()
     };
     if key.is_empty() {
-        key = config::RS_PUB_KEY.to_owned();
+        key = if Config::get_option(config::keys::OPTION_SERVER_PROVIDER) == "0" {
+            WAYDESK_KEY.to_owned()
+        } else {
+            config::RS_PUB_KEY.to_owned()
+        };
     }
     key
 }

@@ -165,6 +165,17 @@ enum ServerType {
   custom
 }
 
+int? _serverTypeToProvider(ServerType type) {
+  switch (type) {
+    case ServerType.waydesk:
+      return 0;
+    case ServerType.rustdeskOfficial:
+      return 1;
+    case ServerType.custom:
+      return null;
+  }
+}
+
 void showServerSettingsWithValue(
     ServerConfig serverConfig,
     OverlayDialogManager dialogManager,
@@ -180,10 +191,20 @@ void showServerSettingsWithValue(
   RxString apiServerMsg = ''.obs;
   Rx<ServerType> selectedServerType = ServerType.custom.obs;
 
-  // 检测当前服务器类型
-  if (serverConfig.idServer == 'rs-ny.rustdesk.com' && serverConfig.key == 'OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=') {
+  final providerOption = (await bind.mainGetOption(key: kOptionServerProvider)).trim();
+  if (providerOption == '0') {
+    selectedServerType.value = ServerType.waydesk;
+  } else if (providerOption == '1') {
     selectedServerType.value = ServerType.rustdeskOfficial;
-  } else if (serverConfig.idServer == 'rustdesk.itstomorin.cn') {
+  }
+
+  // 检测当前服务器类型
+  if (selectedServerType.value == ServerType.custom &&
+      serverConfig.idServer == 'rs-ny.rustdesk.com' &&
+      serverConfig.key == 'OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=') {
+    selectedServerType.value = ServerType.rustdeskOfficial;
+  } else if (selectedServerType.value == ServerType.custom &&
+      serverConfig.idServer == 'rustdesk.itstomorin.cn') {
     selectedServerType.value = ServerType.waydesk;
   }
 
@@ -199,14 +220,38 @@ void showServerSettingsWithValue(
       setState(() {
         isInProgress = true;
       });
-      bool ret = await setServerConfig(
-          null,
-          errMsgs,
-          ServerConfig(
-              idServer: idCtrl.text.trim(),
-              relayServer: relayCtrl.text.trim(),
-              apiServer: apiCtrl.text.trim(),
-              key: keyCtrl.text.trim()));
+
+      final oldApiServer = await bind.mainGetApiServer();
+      final selectedProvider = _serverTypeToProvider(selectedServerType.value);
+      bool ret = true;
+      if (selectedProvider != null) {
+        // For built-in server providers, switch by provider option only,
+        // and clear custom address options to avoid manual overrides.
+        await bind.mainSetOption(
+            key: 'custom-rendezvous-server', value: '');
+        await bind.mainSetOption(key: 'relay-server', value: '');
+        await bind.mainSetOption(key: 'api-server', value: '');
+        await bind.mainSetOption(key: 'key', value: '');
+        await bind.mainSetOption(
+            key: kOptionServerProvider, value: selectedProvider.toString());
+      } else {
+        await bind.mainSetOption(key: kOptionServerProvider, value: '');
+        ret = await setServerConfig(
+            null,
+            errMsgs,
+            ServerConfig(
+                idServer: idCtrl.text.trim(),
+                relayServer: relayCtrl.text.trim(),
+                apiServer: apiCtrl.text.trim(),
+                key: keyCtrl.text.trim()));
+      }
+
+      final newApiServer = await bind.mainGetApiServer();
+      if (oldApiServer.isNotEmpty &&
+          oldApiServer != newApiServer &&
+          gFFI.userModel.isLogin) {
+        gFFI.userModel.logOut(apiServer: oldApiServer);
+      }
       setState(() {
         isInProgress = false;
       });
@@ -285,10 +330,6 @@ void showServerSettingsWithValue(
                           groupValue: selectedServerType.value,
                           onChanged: (value) {
                             selectedServerType.value = value!;
-                            idCtrl.text = 'rustdesk.itstomorin.cn';
-                            relayCtrl.text = '';
-                            apiCtrl.text = 'https://rustdesk.itstomorin.cn';
-                            keyCtrl.text = '';
                           },
                         ),
                         RadioListTile<ServerType>(
@@ -297,10 +338,6 @@ void showServerSettingsWithValue(
                           groupValue: selectedServerType.value,
                           onChanged: (value) {
                             selectedServerType.value = value!;
-                            idCtrl.text = 'rs-ny.rustdesk.com';
-                            relayCtrl.text = '';
-                            apiCtrl.text = '';
-                            keyCtrl.text = 'OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=';
                           },
                         ),
                         RadioListTile<ServerType>(
@@ -342,34 +379,6 @@ void showServerSettingsWithValue(
                     ),
                     SizedBox(height: 8),
                     buildField('Key', keyCtrl, ''),
-                  ] else ...[
-                    // 非自定义服务器时显示只读的配置信息
-                    Opacity(
-                      opacity: 0.7,
-                      child: Column(
-                        children: [
-                          buildField(translate('ID Server'), idCtrl, '',
-                              autofocus: false, readOnly: true),
-                          SizedBox(height: 8),
-                          if (!isIOS && !isWeb) ...[
-                            buildField(translate('Relay Server'), relayCtrl,
-                                '', readOnly: true),
-                            SizedBox(height: 8),
-                          ],
-                          if (selectedServerType.value != ServerType.rustdeskOfficial) ...[
-                            buildField(
-                              translate('API Server'),
-                              apiCtrl,
-                              '',
-                              validator: null,
-                              readOnly: true,
-                            ),
-                            SizedBox(height: 8),
-                          ],
-                          buildField('Key', keyCtrl, '', readOnly: true),
-                        ],
-                      ),
-                    ),
                   ],
                   
                   if (isInProgress)
