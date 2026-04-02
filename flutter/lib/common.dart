@@ -3473,8 +3473,10 @@ class _CountDownButtonState extends State<_CountDownButton> {
   }
 }
 
-importConfig(List<TextEditingController>? controllers, List<RxString>? errMsgs,
-    String? text) {
+Future<ServerConfig?> importConfig(
+    List<TextEditingController>? controllers,
+    List<RxString>? errMsgs,
+    String? text) async {
   text = text?.trim();
   if (text != null && text.isNotEmpty) {
     try {
@@ -3483,24 +3485,23 @@ importConfig(List<TextEditingController>? controllers, List<RxString>? errMsgs,
         sc.relayServer = '';
       }
       if (sc.idServer.isNotEmpty) {
-        Future<bool> success = setServerConfig(controllers, errMsgs, sc);
-        success.then((value) {
-          if (value) {
-            showToast(translate('Import server configuration successfully'));
-          } else {
-            showToast(translate('Invalid server configuration'));
-          }
-        });
+        final success = await setServerConfig(controllers, errMsgs, sc);
+        if (success) {
+          showToast(translate('Import server configuration successfully'));
+          return sc;
+        } else {
+          showToast(translate('Invalid server configuration'));
+        }
       } else {
         showToast(translate('Invalid server configuration'));
       }
-      return sc;
     } catch (e) {
       showToast(translate('Invalid server configuration'));
     }
   } else {
     showToast(translate('Clipboard is empty'));
   }
+  return null;
 }
 
 Future<bool> setServerConfig(

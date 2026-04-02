@@ -72,15 +72,77 @@ enum ServerType {
   custom
 }
 
-int? _serverTypeToProvider(ServerType type) {
-  switch (type) {
-    case ServerType.waydesk:
-      return 0;
-    case ServerType.rustdeskOfficial:
-      return 1;
-    case ServerType.custom:
-      return null;
+class ServerPreset {
+  const ServerPreset({
+    required this.type,
+    required this.title,
+    required this.config,
+  });
+
+  final ServerType type;
+  final String title;
+  final ServerConfig config;
+
+  bool matches(ServerConfig other) {
+    String normalize(String value) => value.trim();
+    if (normalize(config.idServer) != normalize(other.idServer)) {
+      return false;
+    }
+    if (other.relayServer.trim().isNotEmpty &&
+        normalize(config.relayServer) != normalize(other.relayServer)) {
+      return false;
+    }
+    if (other.apiServer.trim().isNotEmpty &&
+        normalize(config.apiServer) != normalize(other.apiServer)) {
+      return false;
+    }
+    if (other.key.trim().isNotEmpty &&
+        normalize(config.key) != normalize(other.key)) {
+      return false;
+    }
+    return true;
   }
+}
+
+final List<ServerPreset> kServerPresets = [
+  ServerPreset(
+    type: ServerType.rustdeskOfficial,
+    title: 'rustdesk官方服务器',
+    config: ServerConfig(
+      idServer: 'rs-ny.rustdesk.com',
+      relayServer: '',
+      apiServer: 'https://admin.rustdesk.com',
+      key: 'OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=',
+    ),
+  ),
+  ServerPreset(
+    type: ServerType.waydesk,
+    title: 'waydesk服务器',
+    config: ServerConfig(
+      idServer: 'rustdesk.itstomorin.cn',
+      relayServer: '',
+      apiServer: 'https://rustdesk.itstomorin.cn',
+      key: 'hrPrVtYmAHGReIR552swYsGny0kreUNfppUfHb9M4m8=',
+    ),
+  ),
+];
+
+ServerType detectServerType(ServerConfig config) {
+  for (final preset in kServerPresets) {
+    if (preset.matches(config)) {
+      return preset.type;
+    }
+  }
+  return ServerType.custom;
+}
+
+ServerPreset? getServerPreset(ServerType type) {
+  for (final preset in kServerPresets) {
+    if (preset.type == type) {
+      return preset;
+    }
+  }
+  return null;
 }
 
 void showServerSettingsWithValue(
@@ -96,23 +158,64 @@ void showServerSettingsWithValue(
   RxString idServerMsg = ''.obs;
   RxString relayServerMsg = ''.obs;
   RxString apiServerMsg = ''.obs;
-  Rx<ServerType> selectedServerType = ServerType.custom.obs;
+  Rx<ServerType> selectedServerType = detectServerType(serverConfig).obs;
 
-  final providerOption = (await bind.mainGetOption(key: kOptionServerProvider)).trim();
-  if (providerOption == '0') {
-    selectedServerType.value = ServerType.waydesk;
-  } else if (providerOption == '1') {
-    selectedServerType.value = ServerType.rustdeskOfficial;
+  ServerConfig customConfig = selectedServerType.value == ServerType.custom
+      ? ServerConfig(
+          idServer: serverConfig.idServer,
+          relayServer: serverConfig.relayServer,
+          apiServer: serverConfig.apiServer,
+          key: serverConfig.key,
+        )
+      : ServerConfig();
+
+  void clearErrors() {
+    idServerMsg.value = '';
+    relayServerMsg.value = '';
+    apiServerMsg.value = '';
   }
 
-  // 检测当前服务器类型
-  if (selectedServerType.value == ServerType.custom &&
-      serverConfig.idServer == 'rs-ny.rustdesk.com' &&
-      serverConfig.key == 'OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=') {
-    selectedServerType.value = ServerType.rustdeskOfficial;
-  } else if (selectedServerType.value == ServerType.custom &&
-      serverConfig.idServer == 'rustdesk.itstomorin.cn') {
-    selectedServerType.value = ServerType.waydesk;
+  ServerConfig readCurrentConfig() => ServerConfig(
+        idServer: idCtrl.text.trim(),
+        relayServer: relayCtrl.text.trim(),
+        apiServer: apiCtrl.text.trim(),
+        key: keyCtrl.text.trim(),
+      );
+
+  void writeConfig(ServerConfig config) {
+    idCtrl.text = config.idServer;
+    relayCtrl.text = config.relayServer;
+    apiCtrl.text = config.apiServer;
+    keyCtrl.text = config.key;
+  }
+
+  void applyServerType(ServerType type) {
+    if (selectedServerType.value == ServerType.custom) {
+      customConfig = readCurrentConfig();
+    }
+    selectedServerType.value = type;
+    clearErrors();
+    if (type == ServerType.custom) {
+      writeConfig(customConfig);
+      return;
+    }
+    final preset = getServerPreset(type);
+    if (preset != null) {
+      writeConfig(preset.config);
+    }
+  }
+
+  void syncServerTypeFromConfig(ServerConfig config) {
+    final type = detectServerType(config);
+    selectedServerType.value = type;
+    if (type == ServerType.custom) {
+      customConfig = ServerConfig(
+        idServer: config.idServer,
+        relayServer: config.relayServer,
+        apiServer: config.apiServer,
+        key: config.key,
+      );
+    }
   }
 
   final controllers = [idCtrl, relayCtrl, apiCtrl, keyCtrl];
@@ -127,37 +230,17 @@ void showServerSettingsWithValue(
       setState(() {
         isInProgress = true;
       });
-
-      final oldApiServer = await bind.mainGetApiServer();
-      final selectedProvider = _serverTypeToProvider(selectedServerType.value);
-      bool ret = true;
-      if (selectedProvider != null) {
-        // For built-in server providers, switch by provider option only,
-        // and clear custom address options to avoid manual overrides.
-        await bind.mainSetOption(
-            key: 'custom-rendezvous-server', value: '');
-        await bind.mainSetOption(key: 'relay-server', value: '');
-        await bind.mainSetOption(key: 'api-server', value: '');
-        await bind.mainSetOption(key: 'key', value: '');
-        await bind.mainSetOption(
-            key: kOptionServerProvider, value: selectedProvider.toString());
-      } else {
-        await bind.mainSetOption(key: kOptionServerProvider, value: '');
-        ret = await setServerConfig(
-            null,
-            errMsgs,
-            ServerConfig(
-                idServer: idCtrl.text.trim(),
-                relayServer: relayCtrl.text.trim(),
-                apiServer: apiCtrl.text.trim(),
-                key: keyCtrl.text.trim()));
-      }
-
-      final newApiServer = await bind.mainGetApiServer();
-      if (oldApiServer.isNotEmpty &&
-          oldApiServer != newApiServer &&
-          gFFI.userModel.isLogin) {
-        gFFI.userModel.logOut(apiServer: oldApiServer);
+      final config = selectedServerType.value == ServerType.custom
+          ? readCurrentConfig()
+          : getServerPreset(selectedServerType.value)!.config;
+      bool ret = await setServerConfig(
+        null,
+        errMsgs,
+        config,
+      );
+      if (ret) {
+        writeConfig(config);
+        syncServerTypeFromConfig(config);
       }
       setState(() {
         isInProgress = false;
@@ -166,8 +249,13 @@ void showServerSettingsWithValue(
     }
 
     Widget buildField(
-        String label, TextEditingController controller, String errorMsg,
-        {String? Function(String?)? validator, bool autofocus = false, bool readOnly = false}) {
+      String label,
+      TextEditingController controller,
+      String errorMsg, {
+      String? Function(String?)? validator,
+      bool autofocus = false,
+      bool readOnly = false,
+    }) {
       if (isDesktop || isWeb) {
         return Row(
           children: [
@@ -208,7 +296,14 @@ void showServerSettingsWithValue(
       title: Row(
         children: [
           Expanded(child: Text(translate('ID/Relay Server'))),
-          ...ServerConfigImportExportWidgets(controllers, errMsgs),
+          ...ServerConfigImportExportWidgets(
+            controllers,
+            errMsgs,
+            onImported: (config) {
+              clearErrors();
+              syncServerTypeFromConfig(config);
+            },
+          ),
         ],
       ),
       content: ConstrainedBox(
@@ -217,50 +312,52 @@ void showServerSettingsWithValue(
           child: Obx(() => Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // 服务器选择选项
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+                      border: Border(
+                        bottom: BorderSide(color: Colors.grey.shade200),
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           '选择服务器',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                         SizedBox(height: 8),
+                        for (final preset in kServerPresets)
+                          RadioListTile<ServerType>(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(preset.title),
+                            subtitle: Text(preset.config.idServer),
+                            value: preset.type,
+                            groupValue: selectedServerType.value,
+                            onChanged: (value) {
+                              if (value != null) {
+                                applyServerType(value);
+                              }
+                            },
+                          ),
                         RadioListTile<ServerType>(
-                          title: Text('使用waydesk服务器'),
-                          value: ServerType.waydesk,
-                          groupValue: selectedServerType.value,
-                          onChanged: (value) {
-                            selectedServerType.value = value!;
-                          },
-                        ),
-                        RadioListTile<ServerType>(
-                          title: Text('使用rustdesk官方服务器'),
-                          value: ServerType.rustdeskOfficial,
-                          groupValue: selectedServerType.value,
-                          onChanged: (value) {
-                            selectedServerType.value = value!;
-                          },
-                        ),
-                        RadioListTile<ServerType>(
+                          contentPadding: EdgeInsets.zero,
                           title: Text('自定义服务器'),
                           value: ServerType.custom,
                           groupValue: selectedServerType.value,
                           onChanged: (value) {
-                            selectedServerType.value = value!;
+                            if (value != null) {
+                              applyServerType(value);
+                            }
                           },
                         ),
                       ],
                     ),
                   ),
                   SizedBox(height: 16),
-                  
-                  // 服务器配置选项
                   if (selectedServerType.value == ServerType.custom) ...[
                     buildField(translate('ID Server'), idCtrl, idServerMsg.value,
                         autofocus: true),
@@ -286,8 +383,65 @@ void showServerSettingsWithValue(
                     ),
                     SizedBox(height: 8),
                     buildField('Key', keyCtrl, ''),
+                  ] else ...[
+                    Builder(builder: (context) {
+                      final preset =
+                          getServerPreset(selectedServerType.value)!;
+                      final rows = <(String, String)>[
+                        (translate('ID Server'), preset.config.idServer),
+                        if (!isIOS && !isWeb)
+                          (translate('Relay Server'), preset.config.relayServer),
+                        (translate('API Server'), preset.config.apiServer),
+                        ('Key', preset.config.key),
+                      ].where((entry) => entry.$2.isNotEmpty).toList();
+                      return Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest
+                              .withOpacity(0.35),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              preset.title,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 8),
+                            for (final row in rows)
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 8),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 96,
+                                      child: Text(
+                                        '${row.$1}:',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.color
+                                              ?.withOpacity(0.7),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: SelectableText(row.$2),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    }),
                   ],
-                  
                   if (isInProgress)
                     Padding(
                       padding: EdgeInsets.only(top: 8),

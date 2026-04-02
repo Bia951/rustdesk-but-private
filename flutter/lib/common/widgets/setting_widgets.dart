@@ -181,11 +181,16 @@ customImageQualitySetting() {
 List<Widget> ServerConfigImportExportWidgets(
   List<TextEditingController> controllers,
   List<RxString> errMsgs,
+  {
+    void Function(ServerConfig config)? onImported,
+  },
 ) {
-  import() {
-    Clipboard.getData(Clipboard.kTextPlain).then((value) {
-      importConfig(controllers, errMsgs, value?.text);
-    });
+  import() async {
+    final value = await Clipboard.getData(Clipboard.kTextPlain);
+    final config = await importConfig(controllers, errMsgs, value?.text);
+    if (config != null) {
+      onImported?.call(config);
+    }
   }
 
   export() {
