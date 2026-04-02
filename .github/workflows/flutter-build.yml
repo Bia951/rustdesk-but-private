@@ -1548,6 +1548,20 @@ jobs:
             pushd /workspace
             export CARGO_INCREMENTAL=0
             export DEB_ARCH=${{ matrix.job.deb_arch }}
+            if [[ "${{ matrix.job.arch }}" == "aarch64" ]]; then
+              # Only bundle SourceHanSansSC for aarch64 linux builds (fonts live in flutter/assets/).
+              test -f flutter/assets/SourceHanSansSC-Regular.otf
+              test -f flutter/assets/SourceHanSansSC-Bold.otf
+
+              # Enable font assets in pubspec.yaml (keep indentation valid for YAML).
+              sed -i 's/^  #  - family: SourceHanSansSC/    - family: SourceHanSansSC/' flutter/pubspec.yaml
+              sed -i 's/^  #    fonts:/      fonts:/' flutter/pubspec.yaml
+              sed -i 's/^  #    - asset: assets\/SourceHanSansSC-Regular\.otf/        - asset: assets\/SourceHanSansSC-Regular.otf/' flutter/pubspec.yaml
+              sed -i 's/^  #    - asset: assets\/SourceHanSansSC-Bold\.otf/        - asset: assets\/SourceHanSansSC-Bold.otf/' flutter/pubspec.yaml
+              sed -i 's/^  #      weight: 700/          weight: 700/' flutter/pubspec.yaml
+
+              sed -i "s#^[[:space:]]*//fontFamily: 'SourceHanSansSC',#    fontFamily: 'SourceHanSansSC',#g" flutter/lib/common.dart
+            fi
             python3 ./build.py --flutter --skip-cargo
             for name in rustdesk*??.deb; do
               mv "$name" "${name%%.deb}-${{ matrix.job.arch }}.deb"
