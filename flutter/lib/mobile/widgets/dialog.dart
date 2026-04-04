@@ -58,6 +58,19 @@ void showServerSettings(OverlayDialogManager dialogManager,
   showServerSettingsWithValue(state, dialogManager, setState);
 }
 
+void showServerSettingsWithConfig(
+    ServerConfig config,
+    OverlayDialogManager dialogManager,
+    void Function(VoidCallback)? upSetState) async {
+  final provider = await detectServerProviderForConfig(config);
+  final state = ServerProviderState(
+    provider: provider,
+    customServerDraft: config,
+    activeServerConfig: config,
+  );
+  showServerSettingsWithValue(state, dialogManager, upSetState);
+}
+
 const String kServerProviderOfficial = 'official';
 const String kServerProviderWaydesk = 'waydesk';
 const String kServerProviderCustom = 'custom';
