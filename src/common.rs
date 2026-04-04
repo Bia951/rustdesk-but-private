@@ -66,14 +66,14 @@ pub const DEFAULT_KEEP_ALIVE: i32 = 60_000;
 const MIN_VER_MULTI_UI_SESSION: &str = "1.2.4";
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct ServerConfigState {
+pub struct ServerConfigData {
     pub id_server: String,
     pub relay_server: String,
     pub api_server: String,
     pub key: String,
 }
 
-impl ServerConfigState {
+impl ServerConfigData {
     fn normalized(mut self) -> Self {
         self.id_server = self.id_server.trim().trim_end_matches('/').to_owned();
         self.relay_server = self.relay_server.trim().trim_end_matches('/').to_owned();
@@ -92,10 +92,10 @@ impl ServerConfigState {
     }
 }
 
-fn server_provider_config(provider: &str) -> Option<(ServerConfigState, bool)> {
+fn get_builtin_server_provider_config(provider: &str) -> Option<(ServerConfigData, bool)> {
     match provider {
         config::SERVER_PROVIDER_OFFICIAL => Some((
-            ServerConfigState {
+            ServerConfigData {
                 id_server: config::OFFICIAL_RENDEZVOUS_SERVER.to_owned(),
                 relay_server: String::new(),
                 api_server: config::OFFICIAL_API_SERVER.to_owned(),
@@ -104,21 +104,21 @@ fn server_provider_config(provider: &str) -> Option<(ServerConfigState, bool)> {
             true,
         )),
         config::SERVER_PROVIDER_WAYDESK => Some((
-            ServerConfigState {
+            ServerConfigData {
                 id_server: config::WAYDESK_RENDEZVOUS_SERVER.to_owned(),
                 relay_server: String::new(),
                 api_server: config::WAYDESK_API_SERVER.to_owned(),
                 key: config::WAYDESK_PUB_KEY.to_owned(),
             },
-            true,
+            false,
         )),
         _ => None,
     }
 }
 
-fn parse_server_config_value(config_json: &str) -> ServerConfigState {
+fn parse_server_config_data(config_json: &str) -> ServerConfigData {
     let value: Value = serde_json::from_str(config_json).unwrap_or(Value::Null);
-    ServerConfigState {
+    ServerConfigData {
         id_server: value["idServer"].as_str().unwrap_or_default().to_owned(),
         relay_server: value["relayServer"].as_str().unwrap_or_default().to_owned(),
         api_server: value["apiServer"].as_str().unwrap_or_default().to_owned(),
@@ -127,8 +127,8 @@ fn parse_server_config_value(config_json: &str) -> ServerConfigState {
     .normalized()
 }
 
-fn get_legacy_server_config() -> ServerConfigState {
-    ServerConfigState {
+fn get_legacy_server_snapshot() -> ServerConfigData {
+    ServerConfigData {
         id_server: get_option(keys::OPTION_CUSTOM_RENDEZVOUS_SERVER),
         relay_server: get_option(keys::OPTION_RELAY_SERVER),
         api_server: get_option(keys::OPTION_API_SERVER),
@@ -137,33 +137,33 @@ fn get_legacy_server_config() -> ServerConfigState {
     .normalized()
 }
 
-pub fn get_custom_server_config() -> ServerConfigState {
-    let mut config = ServerConfigState {
+pub fn get_custom_server_draft() -> ServerConfigData {
+    let mut config = ServerConfigData {
         id_server: get_option(keys::OPTION_CUSTOM_SERVER_ID),
         relay_server: get_option(keys::OPTION_CUSTOM_SERVER_RELAY),
         api_server: get_option(keys::OPTION_CUSTOM_SERVER_API),
         key: get_option(keys::OPTION_CUSTOM_SERVER_KEY),
     }
     .normalized();
-    if config == ServerConfigState::default() {
-        config = get_legacy_server_config();
+    if config == ServerConfigData::default() {
+        config = get_legacy_server_snapshot();
     }
     config
 }
 
-fn detect_server_provider_from_config(server_config: &ServerConfigState) -> &'static str {
+fn detect_server_provider_from_server_config(server_config: &ServerConfigData) -> &'static str {
     for provider in [
         config::SERVER_PROVIDER_OFFICIAL,
         config::SERVER_PROVIDER_WAYDESK,
     ] {
-        if let Some((builtin, _)) = server_provider_config(provider) {
+        if let Some((builtin, _)) = get_builtin_server_provider_config(provider) {
             if *server_config == builtin.normalized() {
                 return provider;
             }
         }
     }
-    if server_config == &ServerConfigState::default() {
-        config::SERVER_PROVIDER_WAYDESK
+    if server_config == &ServerConfigData::default() {
+        config::SERVER_PROVIDER_OFFICIAL
     } else {
         config::SERVER_PROVIDER_CUSTOM
     }
@@ -179,39 +179,48 @@ pub fn get_server_provider() -> String {
     ) {
         return provider;
     }
-    detect_server_provider_from_config(&get_legacy_server_config()).to_owned()
+    detect_server_provider_from_server_config(&get_legacy_server_snapshot()).to_owned()
 }
 
-pub fn get_resolved_server_config() -> ServerConfigState {
-    if let Some((config, _)) = server_provider_config(&get_server_provider()) {
+pub fn get_active_server_config() -> ServerConfigData {
+    if let Some((config, _)) = get_builtin_server_provider_config(&get_server_provider()) {
         return config.normalized();
     }
-    get_custom_server_config()
+    get_custom_server_draft()
 }
 
 pub fn using_public_server_provider(provider: &str) -> bool {
-    server_provider_config(provider)
+    get_builtin_server_provider_config(provider)
         .map(|(_, is_public)| is_public)
         .unwrap_or(false)
 }
 
 pub fn get_server_provider_state() -> String {
     let provider = get_server_provider();
-    let custom = get_custom_server_config();
-    let resolved = if let Some((config, _)) = server_provider_config(&provider) {
+    let custom_server_draft = get_custom_server_draft();
+    let active_server_config = if let Some((config, _)) = get_builtin_server_provider_config(&provider) {
         config
     } else {
-        custom.clone()
+        custom_server_draft.clone()
     };
     json!({
         "provider": provider,
-        "customConfig": custom.to_json_value(),
-        "resolvedConfig": resolved.to_json_value(),
+        "customServerDraft": custom_server_draft.to_json_value(),
+        "activeServerConfig": active_server_config.to_json_value(),
     })
     .to_string()
 }
 
-fn set_custom_server_config(config: &ServerConfigState) {
+pub fn get_server_provider_active_config(provider: String) -> String {
+    let config = if let Some((config, _)) = get_builtin_server_provider_config(&provider) {
+        config
+    } else {
+        get_custom_server_draft()
+    };
+    config.to_json_value().to_string()
+}
+
+fn set_custom_server_draft(config: &ServerConfigData) {
     set_option(
         keys::OPTION_CUSTOM_SERVER_ID.to_owned(),
         config.id_server.clone(),
@@ -227,7 +236,7 @@ fn set_custom_server_config(config: &ServerConfigState) {
     set_option(keys::OPTION_CUSTOM_SERVER_KEY.to_owned(), config.key.clone());
 }
 
-fn set_server_snapshot(config: &ServerConfigState) {
+fn set_legacy_server_snapshot(config: &ServerConfigData) {
     set_option(
         keys::OPTION_CUSTOM_RENDEZVOUS_SERVER.to_owned(),
         config.id_server.clone(),
@@ -237,25 +246,26 @@ fn set_server_snapshot(config: &ServerConfigState) {
     set_option(keys::OPTION_KEY.to_owned(), config.key.clone());
 }
 
-pub fn save_server_provider(provider: String, custom_config_json: String) {
-    let provider = match provider.as_str() {
+pub fn save_server_provider(server_provider: String, custom_server_draft_json: String) {
+    let server_provider = match server_provider.as_str() {
         config::SERVER_PROVIDER_OFFICIAL => config::SERVER_PROVIDER_OFFICIAL,
         config::SERVER_PROVIDER_WAYDESK => config::SERVER_PROVIDER_WAYDESK,
         _ => config::SERVER_PROVIDER_CUSTOM,
     };
-    let custom_config = parse_server_config_value(&custom_config_json);
-    set_custom_server_config(&custom_config);
-    set_option(keys::OPTION_SERVER_PROVIDER.to_owned(), provider.to_owned());
-    let resolved = if let Some((config, _)) = server_provider_config(provider) {
+    let custom_server_draft = parse_server_config_data(&custom_server_draft_json);
+    set_custom_server_draft(&custom_server_draft);
+    set_option(keys::OPTION_SERVER_PROVIDER.to_owned(), server_provider.to_owned());
+    let active_server_config = if let Some((config, _)) = get_builtin_server_provider_config(server_provider) {
         config.normalized()
     } else {
-        custom_config
+        custom_server_draft
     };
-    set_server_snapshot(&resolved);
+    set_legacy_server_snapshot(&active_server_config);
 }
 
-pub fn detect_server_provider_for_config(config_json: String) -> String {
-    detect_server_provider_from_config(&parse_server_config_value(&config_json)).to_owned()
+pub fn detect_server_provider_for_server_config(server_config_json: String) -> String {
+    detect_server_provider_from_server_config(&parse_server_config_data(&server_config_json))
+        .to_owned()
 }
 
 pub mod input {
@@ -1262,7 +1272,7 @@ fn get_api_server_(api: String, custom: String) -> String {
             return lic.api.clone();
         }
     }
-    if let Some((config, _)) = server_provider_config(&get_server_provider()) {
+    if let Some((config, _)) = get_builtin_server_provider_config(&get_server_provider()) {
         if !config.api_server.is_empty() {
             return config.api_server;
         }
@@ -1284,10 +1294,7 @@ fn get_api_server_(api: String, custom: String) -> String {
 
 #[inline]
 pub fn is_public(url: &str) -> bool {
-    url.contains("rustdesk.com/")
-        || url.ends_with("rustdesk.com")
-        || url.contains("rustdesk.itstomorin.cn/")
-        || url.ends_with("rustdesk.itstomorin.cn")
+    url.contains("rustdesk.com/") || url.ends_with("rustdesk.com")
 }
 
 pub fn get_udp_punch_enabled() -> bool {
@@ -1731,7 +1738,7 @@ pub async fn get_key(sync: bool) -> String {
         options.remove("key").unwrap_or_default()
     };
     if key.is_empty() {
-        if let Some((config, _)) = server_provider_config(&get_server_provider()) {
+        if let Some((config, _)) = get_builtin_server_provider_config(&get_server_provider()) {
             key = config.key;
         }
     }
@@ -2681,12 +2688,10 @@ mod tests {
         assert!(is_public("https://rustdesk.com"));
         assert!(is_public("http://www.rustdesk.com"));
         assert!(is_public("https://api.rustdesk.com"));
-        assert!(is_public("https://rustdesk.itstomorin.cn"));
-        assert!(is_public("https://rustdesk.itstomorin.cn/api"));
-
         // Test non-public URLs
         assert!(!is_public("https://example.com"));
         assert!(!is_public("https://custom-server.com"));
+        assert!(!is_public("https://rustdesk.itstomorin.cn"));
         assert!(!is_public("http://192.168.1.1"));
         assert!(!is_public("localhost"));
         assert!(!is_public("https://rustdesk.computer.com"));

@@ -79,34 +79,20 @@ class ServerProviderPreset {
   const ServerProviderPreset({
     required this.provider,
     required this.titleKey,
-    required this.config,
   });
 
   final String provider;
   final String titleKey;
-  final ServerConfig config;
 }
 
 final List<ServerProviderPreset> kServerPresets = [
   ServerProviderPreset(
     provider: kServerProviderOfficial,
-    titleKey: 'RustDesk Official Server',
-    config: ServerConfig(
-      idServer: 'rs-ny.rustdesk.com',
-      relayServer: '',
-      apiServer: 'https://admin.rustdesk.com',
-      key: 'OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=',
-    ),
+    titleKey: 'RustDesk Official',
   ),
   ServerProviderPreset(
     provider: kServerProviderWaydesk,
-    titleKey: 'WayDesk Server',
-    config: ServerConfig(
-      idServer: 'rustdesk.itstomorin.cn',
-      relayServer: '',
-      apiServer: 'https://rustdesk.itstomorin.cn',
-      key: 'hrPrVtYmAHGReIR552swYsGny0kreUNfppUfHb9M4m8=',
-    ),
+    titleKey: 'WayDesk',
   ),
 ];
 
@@ -134,6 +120,11 @@ void showServerSettingsWithValue(
   final initialConfig = initialProvider == kServerProviderCustom
       ? state.customServerDraft
       : state.activeServerConfig;
+  final providerConfigs = <String, ServerConfig>{};
+  for (final preset in kServerPresets) {
+    providerConfigs[preset.provider] =
+        await getServerProviderConfig(preset.provider);
+  }
   final idCtrl = TextEditingController(text: initialConfig.idServer);
   final relayCtrl = TextEditingController(text: initialConfig.relayServer);
   final apiCtrl = TextEditingController(text: initialConfig.apiServer);
@@ -180,9 +171,9 @@ void showServerSettingsWithValue(
       writeConfig(customServerDraft);
       return;
     }
-    final preset = getServerPreset(provider);
-    if (preset != null) {
-      writeConfig(preset.config);
+    final activeServerConfig = providerConfigs[provider];
+    if (activeServerConfig != null) {
+      writeConfig(activeServerConfig);
     }
   }
 
@@ -197,9 +188,9 @@ void showServerSettingsWithValue(
     if (serverProvider.value == kServerProviderCustom) {
       writeConfig(customServerDraft);
     } else {
-      final preset = getServerPreset(serverProvider.value);
-      if (preset != null) {
-        writeConfig(preset.config);
+      final activeServerConfig = providerConfigs[serverProvider.value];
+      if (activeServerConfig != null) {
+        writeConfig(activeServerConfig);
       }
     }
   }
@@ -323,7 +314,9 @@ void showServerSettingsWithValue(
                           RadioListTile<String>(
                             contentPadding: EdgeInsets.zero,
                             title: Text(translate(preset.titleKey)),
-                            subtitle: Text(preset.config.idServer),
+                            subtitle: Text(
+                                providerConfigs[preset.provider]?.idServer ??
+                                    ''),
                             value: preset.provider,
                             groupValue: serverProvider.value,
                             onChanged: (value) {
@@ -334,7 +327,7 @@ void showServerSettingsWithValue(
                           ),
                         RadioListTile<String>(
                           contentPadding: EdgeInsets.zero,
-                          title: Text(translate('Custom Server')),
+                          title: Text(translate('Custom')),
                           value: kServerProviderCustom,
                           groupValue: serverProvider.value,
                           onChanged: (value) {
@@ -376,15 +369,17 @@ void showServerSettingsWithValue(
                   ] else ...[
                     Builder(builder: (context) {
                       final preset = getServerPreset(serverProvider.value)!;
+                      final activeServerConfig =
+                          providerConfigs[serverProvider.value]!;
                       final rows = <(String, String)>[
-                        (translate('ID Server'), preset.config.idServer),
+                        (translate('ID Server'), activeServerConfig.idServer),
                         if (!isIOS && !isWeb)
                           (
                             translate('Relay Server'),
-                            preset.config.relayServer
+                            activeServerConfig.relayServer
                           ),
-                        (translate('API Server'), preset.config.apiServer),
-                        ('Key', preset.config.key),
+                        (translate('API Server'), activeServerConfig.apiServer),
+                        ('Key', activeServerConfig.key),
                       ].where((entry) => entry.$2.isNotEmpty).toList();
                       return Container(
                         width: double.infinity,

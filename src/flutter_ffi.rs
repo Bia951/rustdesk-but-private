@@ -987,17 +987,22 @@ pub fn main_set_option(key: String, value: String) {
         || key.eq(config::keys::OPTION_API_SERVER)
         || key.eq(config::keys::OPTION_KEY);
     if is_server_provider_related {
-        let mut custom_config = crate::common::get_custom_server_config();
+        let mut custom_server_draft = crate::common::get_custom_server_draft();
         match key.as_str() {
-            config::keys::OPTION_CUSTOM_RENDEZVOUS_SERVER => custom_config.id_server = value.clone(),
-            config::keys::OPTION_RELAY_SERVER => custom_config.relay_server = value.clone(),
-            config::keys::OPTION_API_SERVER => custom_config.api_server = value.clone(),
-            config::keys::OPTION_KEY => custom_config.key = value.clone(),
+            config::keys::OPTION_CUSTOM_RENDEZVOUS_SERVER => {
+                custom_server_draft.id_server = value.clone()
+            }
+            config::keys::OPTION_RELAY_SERVER => custom_server_draft.relay_server = value.clone(),
+            config::keys::OPTION_API_SERVER => custom_server_draft.api_server = value.clone(),
+            config::keys::OPTION_KEY => custom_server_draft.key = value.clone(),
             _ => {}
         }
+        let server_provider = crate::common::detect_server_provider_for_server_config(
+            custom_server_draft.to_json_value().to_string(),
+        );
         crate::common::save_server_provider(
-            config::SERVER_PROVIDER_CUSTOM.to_owned(),
-            custom_config.to_json_value().to_string(),
+            server_provider,
+            custom_server_draft.to_json_value().to_string(),
         );
         #[cfg(target_os = "android")]
         crate::rendezvous_mediator::RendezvousMediator::restart();
@@ -1038,6 +1043,10 @@ pub fn main_get_server_provider_state() -> String {
     crate::common::get_server_provider_state()
 }
 
+pub fn main_get_server_provider_config(server_provider: String) -> String {
+    crate::common::get_server_provider_active_config(server_provider)
+}
+
 pub fn main_set_server_provider(server_provider: String, custom_config: String) {
     crate::common::save_server_provider(server_provider, custom_config);
     #[cfg(target_os = "android")]
@@ -1047,7 +1056,7 @@ pub fn main_set_server_provider(server_provider: String, custom_config: String) 
 }
 
 pub fn main_detect_server_provider(custom_config: String) -> String {
-    crate::common::detect_server_provider_for_config(custom_config)
+    crate::common::detect_server_provider_for_server_config(custom_config)
 }
 
 pub fn main_set_options(json: String) {

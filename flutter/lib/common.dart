@@ -2940,19 +2940,38 @@ class ServerProviderState {
   factory ServerProviderState.fromJson(Map<String, dynamic> json) =>
       ServerProviderState(
         provider: json['provider'] ?? '',
-        customServerDraft: ServerConfig.fromJson(json['customConfig'] ?? {}),
-        activeServerConfig: ServerConfig.fromJson(json['resolvedConfig'] ?? {}),
+        customServerDraft: ServerConfig.fromJson(
+            json['customServerDraft'] ?? json['customConfig'] ?? {}),
+        activeServerConfig: ServerConfig.fromJson(
+            json['activeServerConfig'] ?? json['resolvedConfig'] ?? {}),
       );
 }
 
 Future<ServerProviderState> getServerProviderState() async {
+  if (isWeb) {
+    throw UnimplementedError('Server provider state is not implemented on web');
+  }
   final state = jsonDecode(await bind.mainGetServerProviderState())
       as Map<String, dynamic>;
   return ServerProviderState.fromJson(state);
 }
 
+Future<ServerConfig> getServerProviderConfig(String serverProvider) async {
+  if (isWeb) {
+    throw UnimplementedError(
+        'Server provider config is not implemented on web');
+  }
+  final config = jsonDecode(
+      await bind.mainGetServerProviderConfig(serverProvider: serverProvider));
+  return ServerConfig.fromJson(config as Map<String, dynamic>);
+}
+
 Future<void> saveServerProviderSettings(
     String serverProvider, ServerConfig customServerDraft) async {
+  if (isWeb) {
+    throw UnimplementedError(
+        'Saving server provider is not implemented on web');
+  }
   final oldApiServer = await bind.mainGetApiServer();
   await bind.mainSetServerProvider(
       serverProvider: serverProvider,
@@ -2966,6 +2985,10 @@ Future<void> saveServerProviderSettings(
 }
 
 Future<String> detectServerProviderForConfig(ServerConfig activeServerConfig) {
+  if (isWeb) {
+    throw UnimplementedError(
+        'Detecting server provider is not implemented on web');
+  }
   return bind.mainDetectServerProvider(
       customConfig: jsonEncode(activeServerConfig.toJson()));
 }
