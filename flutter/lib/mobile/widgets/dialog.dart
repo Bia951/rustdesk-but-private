@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_hbb/common/widgets/setting_widgets.dart';
 import 'package:flutter_hbb/common/widgets/toolbar.dart';
-import 'package:flutter_hbb/consts.dart';
 import 'package:get/get.dart';
 
 import '../../common.dart';
@@ -56,58 +54,30 @@ void setTemporaryPasswordLengthDialog(
 
 void showServerSettings(OverlayDialogManager dialogManager,
     void Function(VoidCallback) setState) async {
-  Map<String, dynamic> options = {};
-  try {
-    options = jsonDecode(await bind.mainGetOptions());
-  } catch (e) {
-    print("Invalid server config: $e");
-  }
-  showServerSettingsWithValue(
-      ServerConfig.fromOptions(options), dialogManager, setState);
+  final state = await getServerProviderState();
+  showServerSettingsWithValue(state, dialogManager, setState);
 }
 
-enum ServerType {
-  waydesk,
-  rustdeskOfficial,
-  custom
-}
+const String kServerProviderOfficial = 'official';
+const String kServerProviderWaydesk = 'waydesk';
+const String kServerProviderCustom = 'custom';
 
-class ServerPreset {
-  const ServerPreset({
-    required this.type,
-    required this.title,
+class ServerProviderPreset {
+  const ServerProviderPreset({
+    required this.provider,
+    required this.titleKey,
     required this.config,
   });
 
-  final ServerType type;
-  final String title;
+  final String provider;
+  final String titleKey;
   final ServerConfig config;
-
-  bool matches(ServerConfig other) {
-    String normalize(String value) => value.trim();
-    if (normalize(config.idServer) != normalize(other.idServer)) {
-      return false;
-    }
-    if (other.relayServer.trim().isNotEmpty &&
-        normalize(config.relayServer) != normalize(other.relayServer)) {
-      return false;
-    }
-    if (other.apiServer.trim().isNotEmpty &&
-        normalize(config.apiServer) != normalize(other.apiServer)) {
-      return false;
-    }
-    if (other.key.trim().isNotEmpty &&
-        normalize(config.key) != normalize(other.key)) {
-      return false;
-    }
-    return true;
-  }
 }
 
-final List<ServerPreset> kServerPresets = [
-  ServerPreset(
-    type: ServerType.rustdeskOfficial,
-    title: 'rustdesk官方服务器',
+final List<ServerProviderPreset> kServerPresets = [
+  ServerProviderPreset(
+    provider: kServerProviderOfficial,
+    titleKey: 'RustDesk Official Server',
     config: ServerConfig(
       idServer: 'rs-ny.rustdesk.com',
       relayServer: '',
@@ -115,9 +85,9 @@ final List<ServerPreset> kServerPresets = [
       key: 'OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=',
     ),
   ),
-  ServerPreset(
-    type: ServerType.waydesk,
-    title: 'waydesk服务器',
+  ServerProviderPreset(
+    provider: kServerProviderWaydesk,
+    titleKey: 'WayDesk Server',
     config: ServerConfig(
       idServer: 'rustdesk.itstomorin.cn',
       relayServer: '',
@@ -127,18 +97,9 @@ final List<ServerPreset> kServerPresets = [
   ),
 ];
 
-ServerType detectServerType(ServerConfig config) {
+ServerProviderPreset? getServerPreset(String provider) {
   for (final preset in kServerPresets) {
-    if (preset.matches(config)) {
-      return preset.type;
-    }
-  }
-  return ServerType.custom;
-}
-
-ServerPreset? getServerPreset(ServerType type) {
-  for (final preset in kServerPresets) {
-    if (preset.type == type) {
+    if (preset.provider == provider) {
       return preset;
     }
   }
@@ -146,28 +107,35 @@ ServerPreset? getServerPreset(ServerType type) {
 }
 
 void showServerSettingsWithValue(
-    ServerConfig serverConfig,
+    ServerProviderState state,
     OverlayDialogManager dialogManager,
     void Function(VoidCallback)? upSetState) async {
   var isInProgress = false;
-  final idCtrl = TextEditingController(text: serverConfig.idServer);
-  final relayCtrl = TextEditingController(text: serverConfig.relayServer);
-  final apiCtrl = TextEditingController(text: serverConfig.apiServer);
-  final keyCtrl = TextEditingController(text: serverConfig.key);
+  final initialProvider = [
+    kServerProviderOfficial,
+    kServerProviderWaydesk,
+    kServerProviderCustom
+  ].contains(state.provider)
+      ? state.provider
+      : kServerProviderCustom;
+  final initialConfig = initialProvider == kServerProviderCustom
+      ? state.customServerDraft
+      : state.activeServerConfig;
+  final idCtrl = TextEditingController(text: initialConfig.idServer);
+  final relayCtrl = TextEditingController(text: initialConfig.relayServer);
+  final apiCtrl = TextEditingController(text: initialConfig.apiServer);
+  final keyCtrl = TextEditingController(text: initialConfig.key);
 
   RxString idServerMsg = ''.obs;
   RxString relayServerMsg = ''.obs;
   RxString apiServerMsg = ''.obs;
-  Rx<ServerType> selectedServerType = detectServerType(serverConfig).obs;
-
-  ServerConfig customConfig = selectedServerType.value == ServerType.custom
-      ? ServerConfig(
-          idServer: serverConfig.idServer,
-          relayServer: serverConfig.relayServer,
-          apiServer: serverConfig.apiServer,
-          key: serverConfig.key,
-        )
-      : ServerConfig();
+  RxString serverProvider = initialProvider.obs;
+  ServerConfig customServerDraft = ServerConfig(
+    idServer: state.customServerDraft.idServer,
+    relayServer: state.customServerDraft.relayServer,
+    apiServer: state.customServerDraft.apiServer,
+    key: state.customServerDraft.key,
+  );
 
   void clearErrors() {
     idServerMsg.value = '';
@@ -175,7 +143,7 @@ void showServerSettingsWithValue(
     apiServerMsg.value = '';
   }
 
-  ServerConfig readCurrentConfig() => ServerConfig(
+  ServerConfig readActiveServerConfig() => ServerConfig(
         idServer: idCtrl.text.trim(),
         relayServer: relayCtrl.text.trim(),
         apiServer: apiCtrl.text.trim(),
@@ -189,32 +157,37 @@ void showServerSettingsWithValue(
     keyCtrl.text = config.key;
   }
 
-  void applyServerType(ServerType type) {
-    if (selectedServerType.value == ServerType.custom) {
-      customConfig = readCurrentConfig();
+  void applyServerProvider(String provider) {
+    if (serverProvider.value == kServerProviderCustom) {
+      customServerDraft = readActiveServerConfig();
     }
-    selectedServerType.value = type;
+    serverProvider.value = provider;
     clearErrors();
-    if (type == ServerType.custom) {
-      writeConfig(customConfig);
+    if (provider == kServerProviderCustom) {
+      writeConfig(customServerDraft);
       return;
     }
-    final preset = getServerPreset(type);
+    final preset = getServerPreset(provider);
     if (preset != null) {
       writeConfig(preset.config);
     }
   }
 
-  void syncServerTypeFromConfig(ServerConfig config) {
-    final type = detectServerType(config);
-    selectedServerType.value = type;
-    if (type == ServerType.custom) {
-      customConfig = ServerConfig(
-        idServer: config.idServer,
-        relayServer: config.relayServer,
-        apiServer: config.apiServer,
-        key: config.key,
-      );
+  void syncProviderState(ServerProviderState state) {
+    serverProvider.value = state.provider;
+    customServerDraft = ServerConfig(
+      idServer: state.customServerDraft.idServer,
+      relayServer: state.customServerDraft.relayServer,
+      apiServer: state.customServerDraft.apiServer,
+      key: state.customServerDraft.key,
+    );
+    if (serverProvider.value == kServerProviderCustom) {
+      writeConfig(customServerDraft);
+    } else {
+      final preset = getServerPreset(serverProvider.value);
+      if (preset != null) {
+        writeConfig(preset.config);
+      }
     }
   }
 
@@ -230,17 +203,20 @@ void showServerSettingsWithValue(
       setState(() {
         isInProgress = true;
       });
-      final config = selectedServerType.value == ServerType.custom
-          ? readCurrentConfig()
-          : getServerPreset(selectedServerType.value)!.config;
-      bool ret = await setServerConfig(
-        null,
-        errMsgs,
-        config,
-      );
+      final customServerDraftToSave =
+          serverProvider.value == kServerProviderCustom
+              ? readActiveServerConfig()
+              : customServerDraft;
+      var ret = true;
+      if (serverProvider.value == kServerProviderCustom) {
+        ret =
+            await validateServerConfig(null, errMsgs, customServerDraftToSave);
+      }
       if (ret) {
-        writeConfig(config);
-        syncServerTypeFromConfig(config);
+        await saveServerProviderSettings(
+            serverProvider.value, customServerDraftToSave);
+        final newState = await getServerProviderState();
+        syncProviderState(newState);
       }
       setState(() {
         isInProgress = false;
@@ -299,9 +275,9 @@ void showServerSettingsWithValue(
           ...ServerConfigImportExportWidgets(
             controllers,
             errMsgs,
-            onImported: (config) {
+            onImported: (_) {
               clearErrors();
-              syncServerTypeFromConfig(config);
+              getServerProviderState().then(syncProviderState);
             },
           ),
         ],
@@ -323,7 +299,7 @@ void showServerSettingsWithValue(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '选择服务器',
+                          translate('Server Provider'),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -331,26 +307,26 @@ void showServerSettingsWithValue(
                         ),
                         SizedBox(height: 8),
                         for (final preset in kServerPresets)
-                          RadioListTile<ServerType>(
+                          RadioListTile<String>(
                             contentPadding: EdgeInsets.zero,
-                            title: Text(preset.title),
+                            title: Text(translate(preset.titleKey)),
                             subtitle: Text(preset.config.idServer),
-                            value: preset.type,
-                            groupValue: selectedServerType.value,
+                            value: preset.provider,
+                            groupValue: serverProvider.value,
                             onChanged: (value) {
                               if (value != null) {
-                                applyServerType(value);
+                                applyServerProvider(value);
                               }
                             },
                           ),
-                        RadioListTile<ServerType>(
+                        RadioListTile<String>(
                           contentPadding: EdgeInsets.zero,
-                          title: Text('自定义服务器'),
-                          value: ServerType.custom,
-                          groupValue: selectedServerType.value,
+                          title: Text(translate('Custom Server')),
+                          value: kServerProviderCustom,
+                          groupValue: serverProvider.value,
                           onChanged: (value) {
                             if (value != null) {
-                              applyServerType(value);
+                              applyServerProvider(value);
                             }
                           },
                         ),
@@ -358,8 +334,9 @@ void showServerSettingsWithValue(
                     ),
                   ),
                   SizedBox(height: 16),
-                  if (selectedServerType.value == ServerType.custom) ...[
-                    buildField(translate('ID Server'), idCtrl, idServerMsg.value,
+                  if (serverProvider.value == kServerProviderCustom) ...[
+                    buildField(
+                        translate('ID Server'), idCtrl, idServerMsg.value,
                         autofocus: true),
                     SizedBox(height: 8),
                     if (!isIOS && !isWeb) ...[
@@ -385,12 +362,14 @@ void showServerSettingsWithValue(
                     buildField('Key', keyCtrl, ''),
                   ] else ...[
                     Builder(builder: (context) {
-                      final preset =
-                          getServerPreset(selectedServerType.value)!;
+                      final preset = getServerPreset(serverProvider.value)!;
                       final rows = <(String, String)>[
                         (translate('ID Server'), preset.config.idServer),
                         if (!isIOS && !isWeb)
-                          (translate('Relay Server'), preset.config.relayServer),
+                          (
+                            translate('Relay Server'),
+                            preset.config.relayServer
+                          ),
                         (translate('API Server'), preset.config.apiServer),
                         ('Key', preset.config.key),
                       ].where((entry) => entry.$2.isNotEmpty).toList();
@@ -408,7 +387,7 @@ void showServerSettingsWithValue(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              preset.title,
+                              translate(preset.titleKey),
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             SizedBox(height: 8),

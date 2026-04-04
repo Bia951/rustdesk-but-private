@@ -785,6 +785,119 @@ class RustdeskImpl {
     return js.context.callMethod('getByName', ['options']);
   }
 
+  Map<String, dynamic> _getOptionsMap() {
+    try {
+      return jsonDecode(mainGetOptionsSync()) as Map<String, dynamic>;
+    } catch (_) {
+      return {};
+    }
+  }
+
+  String _detectServerProvider(Map<String, dynamic> options) {
+    final provider = (options['server-provider'] ?? '').toString();
+    if (provider == 'official' ||
+        provider == 'waydesk' ||
+        provider == 'custom') {
+      return provider;
+    }
+    final idServer = (options['custom-rendezvous-server'] ?? '').toString();
+    final apiServer = (options['api-server'] ?? '').toString();
+    final key = (options['key'] ?? '').toString();
+    if (idServer == 'rs-ny.rustdesk.com' &&
+        apiServer == 'https://admin.rustdesk.com' &&
+        key == 'OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=') {
+      return 'official';
+    }
+    if (idServer == 'rustdesk.itstomorin.cn' &&
+        apiServer == 'https://rustdesk.itstomorin.cn' &&
+        key == 'hrPrVtYmAHGReIR552swYsGny0kreUNfppUfHb9M4m8=') {
+      return 'waydesk';
+    }
+    if (idServer.isNotEmpty || apiServer.isNotEmpty || key.isNotEmpty) {
+      return 'custom';
+    }
+    return 'waydesk';
+  }
+
+  Map<String, dynamic> _presetConfig(String provider) {
+    switch (provider) {
+      case 'official':
+        return {
+          'idServer': 'rs-ny.rustdesk.com',
+          'relayServer': '',
+          'apiServer': 'https://admin.rustdesk.com',
+          'key': 'OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=',
+        };
+      case 'waydesk':
+      default:
+        return {
+          'idServer': 'rustdesk.itstomorin.cn',
+          'relayServer': '',
+          'apiServer': 'https://rustdesk.itstomorin.cn',
+          'key': 'hrPrVtYmAHGReIR552swYsGny0kreUNfppUfHb9M4m8=',
+        };
+    }
+  }
+
+  Future<String> mainGetServerProvider({dynamic hint}) {
+    return Future.value(_detectServerProvider(_getOptionsMap()));
+  }
+
+  Future<String> mainGetServerProviderState({dynamic hint}) {
+    final options = _getOptionsMap();
+    final provider = _detectServerProvider(options);
+    final customConfig = {
+      'idServer': (options['custom-server-id'] ??
+              options['custom-rendezvous-server'] ??
+              '')
+          .toString(),
+      'relayServer':
+          (options['custom-server-relay'] ?? options['relay-server'] ?? '')
+              .toString(),
+      'apiServer': (options['custom-server-api'] ?? options['api-server'] ?? '')
+          .toString(),
+      'key': (options['custom-server-key'] ?? options['key'] ?? '').toString(),
+    };
+    final resolvedConfig =
+        provider == 'custom' ? customConfig : _presetConfig(provider);
+    return Future.value(jsonEncode({
+      'provider': provider,
+      'customConfig': customConfig,
+      'resolvedConfig': resolvedConfig,
+    }));
+  }
+
+  Future<void> mainSetServerProvider(
+      {required String serverProvider,
+      required String customConfig,
+      dynamic hint}) {
+    final options = _getOptionsMap();
+    final custom = jsonDecode(customConfig) as Map<String, dynamic>;
+    options['server-provider'] = serverProvider;
+    options['custom-server-id'] = custom['idServer'] ?? '';
+    options['custom-server-relay'] = custom['relayServer'] ?? '';
+    options['custom-server-api'] = custom['apiServer'] ?? '';
+    options['custom-server-key'] = custom['key'] ?? '';
+    final resolved =
+        serverProvider == 'custom' ? custom : _presetConfig(serverProvider);
+    options['custom-rendezvous-server'] = resolved['idServer'] ?? '';
+    options['relay-server'] = resolved['relayServer'] ?? '';
+    options['api-server'] = resolved['apiServer'] ?? '';
+    options['key'] = resolved['key'] ?? '';
+    return Future(() =>
+        js.context.callMethod('setByName', ['options', jsonEncode(options)]));
+  }
+
+  Future<String> mainDetectServerProvider(
+      {required String customConfig, dynamic hint}) {
+    final config = jsonDecode(customConfig) as Map<String, dynamic>;
+    return Future.value(_detectServerProvider({
+      'custom-rendezvous-server': config['idServer'] ?? '',
+      'api-server': config['apiServer'] ?? '',
+      'key': config['key'] ?? '',
+    }));
+  }
+
   Future<void> mainSetOptions({required String json, dynamic hint}) {
     return Future(() => js.context.callMethod('setByName', ['options', json]));
   }
@@ -2031,7 +2144,9 @@ class RustdeskImpl {
   }
 
   String mainResolveAvatarUrl({required String avatar, dynamic hint}) {
-    return js.context.callMethod('getByName', ['resolve_avatar_url', avatar])?.toString() ?? avatar;
+    return js.context.callMethod(
+            'getByName', ['resolve_avatar_url', avatar])?.toString() ??
+        avatar;
   }
 
   void dispose() {}

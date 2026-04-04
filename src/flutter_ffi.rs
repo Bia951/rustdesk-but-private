@@ -982,11 +982,32 @@ pub fn main_set_option(key: String, value: String) {
     // No need to check if https proxy is used, because this option does not change frequently
     // and restarting mediator is safe even https proxy is not used.
     let is_allow_tls_fallback = key.eq(config::keys::OPTION_ALLOW_INSECURE_TLS_FALLBACK);
+    let is_server_provider_related = key.eq(config::keys::OPTION_CUSTOM_RENDEZVOUS_SERVER)
+        || key.eq(config::keys::OPTION_RELAY_SERVER)
+        || key.eq(config::keys::OPTION_API_SERVER)
+        || key.eq(config::keys::OPTION_KEY);
+    if is_server_provider_related {
+        let mut custom_config = crate::common::get_custom_server_config();
+        match key.as_str() {
+            config::keys::OPTION_CUSTOM_RENDEZVOUS_SERVER => custom_config.id_server = value.clone(),
+            config::keys::OPTION_RELAY_SERVER => custom_config.relay_server = value.clone(),
+            config::keys::OPTION_API_SERVER => custom_config.api_server = value.clone(),
+            config::keys::OPTION_KEY => custom_config.key = value.clone(),
+            _ => {}
+        }
+        crate::common::save_server_provider(
+            config::SERVER_PROVIDER_CUSTOM.to_owned(),
+            custom_config.to_json_value().to_string(),
+        );
+        #[cfg(target_os = "android")]
+        crate::rendezvous_mediator::RendezvousMediator::restart();
+        #[cfg(any(target_os = "android", target_os = "ios", feature = "cli"))]
+        crate::common::test_rendezvous_server();
+        return;
+    }
     if is_allow_tls_fallback
-        || key.eq("custom-rendezvous-server")
         || key.eq(config::keys::OPTION_ALLOW_WEBSOCKET)
         || key.eq(config::keys::OPTION_DISABLE_UDP)
-        || key.eq("api-server")
     {
         if is_allow_tls_fallback {
             hbb_common::tls::reset_tls_cache();
@@ -1007,6 +1028,26 @@ pub fn main_get_options() -> String {
 
 pub fn main_get_options_sync() -> SyncReturn<String> {
     SyncReturn(get_options())
+}
+
+pub fn main_get_server_provider() -> String {
+    crate::common::get_server_provider()
+}
+
+pub fn main_get_server_provider_state() -> String {
+    crate::common::get_server_provider_state()
+}
+
+pub fn main_set_server_provider(server_provider: String, custom_config: String) {
+    crate::common::save_server_provider(server_provider, custom_config);
+    #[cfg(target_os = "android")]
+    crate::rendezvous_mediator::RendezvousMediator::restart();
+    #[cfg(any(target_os = "android", target_os = "ios", feature = "cli"))]
+    crate::common::test_rendezvous_server();
+}
+
+pub fn main_detect_server_provider(custom_config: String) -> String {
+    crate::common::detect_server_provider_for_config(custom_config)
 }
 
 pub fn main_set_options(json: String) {

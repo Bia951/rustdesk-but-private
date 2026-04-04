@@ -2910,6 +2910,64 @@ class ServerConfig {
         relayServer = options['relay-server'] ?? "",
         apiServer = options['api-server'] ?? "",
         key = options['key'] ?? "";
+
+  factory ServerConfig.fromJson(Map<String, dynamic> json) => ServerConfig(
+        idServer: json['idServer'] ?? json['host'],
+        relayServer: json['relayServer'] ?? json['relay'],
+        apiServer: json['apiServer'] ?? json['api'],
+        key: json['key'],
+      );
+
+  Map<String, dynamic> toJson() => {
+        'idServer': idServer.trim(),
+        'relayServer': relayServer.trim(),
+        'apiServer': apiServer.trim(),
+        'key': key.trim(),
+      };
+}
+
+class ServerProviderState {
+  final String provider;
+  final ServerConfig customServerDraft;
+  final ServerConfig activeServerConfig;
+
+  ServerProviderState({
+    required this.provider,
+    required this.customServerDraft,
+    required this.activeServerConfig,
+  });
+
+  factory ServerProviderState.fromJson(Map<String, dynamic> json) =>
+      ServerProviderState(
+        provider: json['provider'] ?? '',
+        customServerDraft: ServerConfig.fromJson(json['customConfig'] ?? {}),
+        activeServerConfig: ServerConfig.fromJson(json['resolvedConfig'] ?? {}),
+      );
+}
+
+Future<ServerProviderState> getServerProviderState() async {
+  final state = jsonDecode(await bind.mainGetServerProviderState())
+      as Map<String, dynamic>;
+  return ServerProviderState.fromJson(state);
+}
+
+Future<void> saveServerProviderSettings(
+    String serverProvider, ServerConfig customServerDraft) async {
+  final oldApiServer = await bind.mainGetApiServer();
+  await bind.mainSetServerProvider(
+      serverProvider: serverProvider,
+      customConfig: jsonEncode(customServerDraft.toJson()));
+  final newApiServer = await bind.mainGetApiServer();
+  if (oldApiServer.isNotEmpty &&
+      oldApiServer != newApiServer &&
+      gFFI.userModel.isLogin) {
+    gFFI.userModel.logOut(apiServer: oldApiServer);
+  }
+}
+
+Future<String> detectServerProviderForConfig(ServerConfig activeServerConfig) {
+  return bind.mainDetectServerProvider(
+      customConfig: jsonEncode(activeServerConfig.toJson()));
 }
 
 Widget dialogButton(String text,
@@ -3473,10 +3531,8 @@ class _CountDownButtonState extends State<_CountDownButton> {
   }
 }
 
-Future<ServerConfig?> importConfig(
-    List<TextEditingController>? controllers,
-    List<RxString>? errMsgs,
-    String? text) async {
+Future<ServerConfig?> importConfig(List<TextEditingController>? controllers,
+    List<RxString>? errMsgs, String? text) async {
   text = text?.trim();
   if (text != null && text.isNotEmpty) {
     try {
@@ -3504,7 +3560,7 @@ Future<ServerConfig?> importConfig(
   return null;
 }
 
-Future<bool> setServerConfig(
+Future<bool> validateServerConfig(
   List<TextEditingController>? controllers,
   List<RxString>? errMsgs,
   ServerConfig config,
@@ -3551,20 +3607,19 @@ Future<bool> setServerConfig(
       return false;
     }
   }
-  final oldApiServer = await bind.mainGetApiServer();
+  return true;
+}
 
-  // should set one by one
-  await bind.mainSetOption(
-      key: 'custom-rendezvous-server', value: config.idServer);
-  await bind.mainSetOption(key: 'relay-server', value: config.relayServer);
-  await bind.mainSetOption(key: 'api-server', value: config.apiServer);
-  await bind.mainSetOption(key: 'key', value: config.key);
-  final newApiServer = await bind.mainGetApiServer();
-  if (oldApiServer.isNotEmpty &&
-      oldApiServer != newApiServer &&
-      gFFI.userModel.isLogin) {
-    gFFI.userModel.logOut(apiServer: oldApiServer);
+Future<bool> setServerConfig(
+  List<TextEditingController>? controllers,
+  List<RxString>? errMsgs,
+  ServerConfig config,
+) async {
+  if (!await validateServerConfig(controllers, errMsgs, config)) {
+    return false;
   }
+  final provider = await detectServerProviderForConfig(config);
+  await saveServerProviderSettings(provider, config);
   return true;
 }
 
@@ -4157,8 +4212,7 @@ Widget? buildAvatarWidget({
       width: size,
       height: size,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) =>
-          fallback ?? SizedBox.shrink(),
+      errorBuilder: (_, __, ___) => fallback ?? SizedBox.shrink(),
     ),
   );
 }

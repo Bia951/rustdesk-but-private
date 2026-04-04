@@ -65,6 +65,199 @@ pub const DEFAULT_KEEP_ALIVE: i32 = 60_000;
 
 const MIN_VER_MULTI_UI_SESSION: &str = "1.2.4";
 
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct ServerConfigState {
+    pub id_server: String,
+    pub relay_server: String,
+    pub api_server: String,
+    pub key: String,
+}
+
+impl ServerConfigState {
+    fn normalized(mut self) -> Self {
+        self.id_server = self.id_server.trim().trim_end_matches('/').to_owned();
+        self.relay_server = self.relay_server.trim().trim_end_matches('/').to_owned();
+        self.api_server = self.api_server.trim().trim_end_matches('/').to_owned();
+        self.key = self.key.trim().to_owned();
+        self
+    }
+
+    pub fn to_json_value(&self) -> Value {
+        json!({
+            "idServer": self.id_server,
+            "relayServer": self.relay_server,
+            "apiServer": self.api_server,
+            "key": self.key,
+        })
+    }
+}
+
+fn server_provider_config(provider: &str) -> Option<(ServerConfigState, bool)> {
+    match provider {
+        config::SERVER_PROVIDER_OFFICIAL => Some((
+            ServerConfigState {
+                id_server: config::OFFICIAL_RENDEZVOUS_SERVER.to_owned(),
+                relay_server: String::new(),
+                api_server: config::OFFICIAL_API_SERVER.to_owned(),
+                key: config::OFFICIAL_PUB_KEY.to_owned(),
+            },
+            true,
+        )),
+        config::SERVER_PROVIDER_WAYDESK => Some((
+            ServerConfigState {
+                id_server: config::WAYDESK_RENDEZVOUS_SERVER.to_owned(),
+                relay_server: String::new(),
+                api_server: config::WAYDESK_API_SERVER.to_owned(),
+                key: config::WAYDESK_PUB_KEY.to_owned(),
+            },
+            true,
+        )),
+        _ => None,
+    }
+}
+
+fn parse_server_config_value(config_json: &str) -> ServerConfigState {
+    let value: Value = serde_json::from_str(config_json).unwrap_or(Value::Null);
+    ServerConfigState {
+        id_server: value["idServer"].as_str().unwrap_or_default().to_owned(),
+        relay_server: value["relayServer"].as_str().unwrap_or_default().to_owned(),
+        api_server: value["apiServer"].as_str().unwrap_or_default().to_owned(),
+        key: value["key"].as_str().unwrap_or_default().to_owned(),
+    }
+    .normalized()
+}
+
+fn get_legacy_server_config() -> ServerConfigState {
+    ServerConfigState {
+        id_server: get_option(keys::OPTION_CUSTOM_RENDEZVOUS_SERVER),
+        relay_server: get_option(keys::OPTION_RELAY_SERVER),
+        api_server: get_option(keys::OPTION_API_SERVER),
+        key: get_option(keys::OPTION_KEY),
+    }
+    .normalized()
+}
+
+pub fn get_custom_server_config() -> ServerConfigState {
+    let mut config = ServerConfigState {
+        id_server: get_option(keys::OPTION_CUSTOM_SERVER_ID),
+        relay_server: get_option(keys::OPTION_CUSTOM_SERVER_RELAY),
+        api_server: get_option(keys::OPTION_CUSTOM_SERVER_API),
+        key: get_option(keys::OPTION_CUSTOM_SERVER_KEY),
+    }
+    .normalized();
+    if config == ServerConfigState::default() {
+        config = get_legacy_server_config();
+    }
+    config
+}
+
+fn detect_server_provider_from_config(server_config: &ServerConfigState) -> &'static str {
+    for provider in [
+        config::SERVER_PROVIDER_OFFICIAL,
+        config::SERVER_PROVIDER_WAYDESK,
+    ] {
+        if let Some((builtin, _)) = server_provider_config(provider) {
+            if *server_config == builtin.normalized() {
+                return provider;
+            }
+        }
+    }
+    if server_config == &ServerConfigState::default() {
+        config::SERVER_PROVIDER_WAYDESK
+    } else {
+        config::SERVER_PROVIDER_CUSTOM
+    }
+}
+
+pub fn get_server_provider() -> String {
+    let provider = get_option(keys::OPTION_SERVER_PROVIDER);
+    if matches!(
+        provider.as_str(),
+        config::SERVER_PROVIDER_OFFICIAL
+            | config::SERVER_PROVIDER_WAYDESK
+            | config::SERVER_PROVIDER_CUSTOM
+    ) {
+        return provider;
+    }
+    detect_server_provider_from_config(&get_legacy_server_config()).to_owned()
+}
+
+pub fn get_resolved_server_config() -> ServerConfigState {
+    if let Some((config, _)) = server_provider_config(&get_server_provider()) {
+        return config.normalized();
+    }
+    get_custom_server_config()
+}
+
+pub fn using_public_server_provider(provider: &str) -> bool {
+    server_provider_config(provider)
+        .map(|(_, is_public)| is_public)
+        .unwrap_or(false)
+}
+
+pub fn get_server_provider_state() -> String {
+    let provider = get_server_provider();
+    let custom = get_custom_server_config();
+    let resolved = if let Some((config, _)) = server_provider_config(&provider) {
+        config
+    } else {
+        custom.clone()
+    };
+    json!({
+        "provider": provider,
+        "customConfig": custom.to_json_value(),
+        "resolvedConfig": resolved.to_json_value(),
+    })
+    .to_string()
+}
+
+fn set_custom_server_config(config: &ServerConfigState) {
+    set_option(
+        keys::OPTION_CUSTOM_SERVER_ID.to_owned(),
+        config.id_server.clone(),
+    );
+    set_option(
+        keys::OPTION_CUSTOM_SERVER_RELAY.to_owned(),
+        config.relay_server.clone(),
+    );
+    set_option(
+        keys::OPTION_CUSTOM_SERVER_API.to_owned(),
+        config.api_server.clone(),
+    );
+    set_option(keys::OPTION_CUSTOM_SERVER_KEY.to_owned(), config.key.clone());
+}
+
+fn set_server_snapshot(config: &ServerConfigState) {
+    set_option(
+        keys::OPTION_CUSTOM_RENDEZVOUS_SERVER.to_owned(),
+        config.id_server.clone(),
+    );
+    set_option(keys::OPTION_RELAY_SERVER.to_owned(), config.relay_server.clone());
+    set_option(keys::OPTION_API_SERVER.to_owned(), config.api_server.clone());
+    set_option(keys::OPTION_KEY.to_owned(), config.key.clone());
+}
+
+pub fn save_server_provider(provider: String, custom_config_json: String) {
+    let provider = match provider.as_str() {
+        config::SERVER_PROVIDER_OFFICIAL => config::SERVER_PROVIDER_OFFICIAL,
+        config::SERVER_PROVIDER_WAYDESK => config::SERVER_PROVIDER_WAYDESK,
+        _ => config::SERVER_PROVIDER_CUSTOM,
+    };
+    let custom_config = parse_server_config_value(&custom_config_json);
+    set_custom_server_config(&custom_config);
+    set_option(keys::OPTION_SERVER_PROVIDER.to_owned(), provider.to_owned());
+    let resolved = if let Some((config, _)) = server_provider_config(provider) {
+        config.normalized()
+    } else {
+        custom_config
+    };
+    set_server_snapshot(&resolved);
+}
+
+pub fn detect_server_provider_for_config(config_json: String) -> String {
+    detect_server_provider_from_config(&parse_server_config_value(&config_json)).to_owned()
+}
+
 pub mod input {
     pub const MOUSE_TYPE_MOVE: i32 = 0;
     pub const MOUSE_TYPE_DOWN: i32 = 1;
@@ -1069,6 +1262,11 @@ fn get_api_server_(api: String, custom: String) -> String {
             return lic.api.clone();
         }
     }
+    if let Some((config, _)) = server_provider_config(&get_server_provider()) {
+        if !config.api_server.is_empty() {
+            return config.api_server;
+        }
+    }
     if !api.is_empty() {
         return api.to_owned();
     }
@@ -1081,12 +1279,15 @@ fn get_api_server_(api: String, custom: String) -> String {
             return format!("http://{}", s);
         }
     }
-    "https://rustdesk.itstomorin.cn".to_owned()
+    config::WAYDESK_API_SERVER.to_owned()
 }
 
 #[inline]
 pub fn is_public(url: &str) -> bool {
-    url.contains("rustdesk.com/") || url.ends_with("rustdesk.com")
+    url.contains("rustdesk.com/")
+        || url.ends_with("rustdesk.com")
+        || url.contains("rustdesk.itstomorin.cn/")
+        || url.ends_with("rustdesk.itstomorin.cn")
 }
 
 pub fn get_udp_punch_enabled() -> bool {
@@ -1530,6 +1731,11 @@ pub async fn get_key(sync: bool) -> String {
         options.remove("key").unwrap_or_default()
     };
     if key.is_empty() {
+        if let Some((config, _)) = server_provider_config(&get_server_provider()) {
+            key = config.key;
+        }
+    }
+    if key.is_empty() {
         key = config::RS_PUB_KEY.to_owned();
     }
     key
@@ -1733,7 +1939,7 @@ pub fn create_symmetric_key_msg(their_pk_b: [u8; 32]) -> (Bytes, Bytes, secretbo
 
 #[inline]
 pub fn using_public_server() -> bool {
-    crate::get_custom_rendezvous_server(get_option("custom-rendezvous-server")).is_empty()
+    using_public_server_provider(&get_server_provider())
 }
 
 pub struct ThrottledInterval {
@@ -2475,6 +2681,8 @@ mod tests {
         assert!(is_public("https://rustdesk.com"));
         assert!(is_public("http://www.rustdesk.com"));
         assert!(is_public("https://api.rustdesk.com"));
+        assert!(is_public("https://rustdesk.itstomorin.cn"));
+        assert!(is_public("https://rustdesk.itstomorin.cn/api"));
 
         // Test non-public URLs
         assert!(!is_public("https://example.com"));
